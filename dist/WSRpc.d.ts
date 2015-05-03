@@ -1,6 +1,10 @@
 export declare module lg3x {
     var DEBUG: boolean;
     module api {
+        interface IRPCRegistry {
+            register(name: string, classname: any): any;
+            invoke(name: string, method: string, params?: any): any;
+        }
         interface IWSRpc {
             connect(): any;
             close(): boolean;
@@ -59,11 +63,17 @@ export declare module lg3x {
         getNamedInstance(): string;
         getId(): string;
     }
-    class RPCRegistry {
-        private _instances;
+    class ObjectRegistry implements api.IRPCRegistry {
+        private _objects;
         constructor();
-        add(name: string, instance: Object): void;
-        invoke(namedInstance: string, namedMethod: string, params?: any): any;
+        register(name: string, className: any): void;
+        invoke(name: string, method: string, params?: any): any;
+    }
+    class ClassRegistry implements api.IRPCRegistry {
+        private _classNames;
+        constructor();
+        register(name: string, className: any): void;
+        invoke(name: string, method: string, params?: any): any;
     }
     class RPC {
         static VERSION: string;

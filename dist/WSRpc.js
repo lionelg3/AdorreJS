@@ -128,27 +128,48 @@ var lg3x;
         return RPCParser;
     })();
     lg3x.RPCParser = RPCParser;
-    var RPCRegistry = (function () {
-        function RPCRegistry() {
-            this._instances = {};
+    var ObjectRegistry = (function () {
+        function ObjectRegistry() {
+            this._objects = {};
         }
-        RPCRegistry.prototype.add = function (name, instance) {
-            this._instances[name] = instance;
+        ObjectRegistry.prototype.register = function (name, className) {
+            this._objects[name] = new className();
         };
-        RPCRegistry.prototype.invoke = function (namedInstance, namedMethod, params) {
+        ObjectRegistry.prototype.invoke = function (name, method, params) {
             try {
-                var instance = this._instances[namedInstance];
-                return instance[namedMethod](params);
+                var instance = this._objects[name];
+                return instance[method](params);
             }
             catch (err) {
-                var msg = 'RPCRegistry invoke fail on ' + namedInstance + '.' + namedMethod;
+                var msg = 'ObjectRegistry invoke fail on ' + name + '.' + method;
                 msg += (params) ? '(' + JSON.stringify(params) + ')' : '()';
                 throw (msg);
             }
         };
-        return RPCRegistry;
+        return ObjectRegistry;
     })();
-    lg3x.RPCRegistry = RPCRegistry;
+    lg3x.ObjectRegistry = ObjectRegistry;
+    var ClassRegistry = (function () {
+        function ClassRegistry() {
+            this._classNames = {};
+        }
+        ClassRegistry.prototype.register = function (name, className) {
+            this._classNames[name] = className;
+        };
+        ClassRegistry.prototype.invoke = function (name, method, params) {
+            try {
+                var instance = new this._classNames[name];
+                return instance[method](params);
+            }
+            catch (err) {
+                var msg = 'ClassRegistry invoke fail on ' + name + '.' + method;
+                msg += (params) ? '(' + JSON.stringify(params) + ')' : '()';
+                throw (msg);
+            }
+        };
+        return ClassRegistry;
+    })();
+    lg3x.ClassRegistry = ClassRegistry;
     var RPC = (function () {
         function RPC() {
         }

@@ -4,6 +4,11 @@ export module lg3x {
 
     export module api {
 
+        export interface IRPCRegistry {
+            register(name: string, classname: any);
+            invoke(name: string, method: string, params?: any): any;
+        }
+
         export interface IWSRpc {
             connect();
             close(): boolean;
@@ -183,21 +188,40 @@ export module lg3x {
         }
     }
 
-    export class RPCRegistry {
-        private _instances: { [name: string]: Object } = {};
-        constructor() {
+    export class ObjectRegistry implements api.IRPCRegistry {
+        private _objects: { [name: string]: Object } = {};
+        constructor() {}
+
+        register(name: string, className: any) {
+            this._objects[name] = new className();
         }
 
-        add(name: string, instance: Object) {
-            this._instances[name] = instance;
-        }
-
-        invoke(namedInstance: string, namedMethod: string, params?: any): any {
+        invoke(name: string, method: string, params?: any): any {
             try {
-                var instance = this._instances[namedInstance];
-                return instance[namedMethod](params);
+                var instance = this._objects[name];
+                return instance[method](params);
             } catch (err) {
-                var msg: string = 'RPCRegistry invoke fail on ' + namedInstance + '.' + namedMethod;
+                var msg: string = 'ObjectRegistry invoke fail on ' + name + '.' + method;
+                msg += (params) ? '(' + JSON.stringify(params) + ')' : '()';
+                throw (msg);
+            }
+        }
+    }
+
+    export class ClassRegistry implements api.IRPCRegistry {
+        private _classNames: { [name: string]: any } = {};
+        constructor() {}
+
+        register(name: string, className: any) {
+            this._classNames[name] = className;
+        }
+
+        invoke(name: string, method: string, params?: any): any {
+            try {
+                var instance = new this._classNames[name];
+                return instance[method](params);
+            } catch (err) {
+                var msg: string = 'ClassRegistry invoke fail on ' + name + '.' + method;
                 msg += (params) ? '(' + JSON.stringify(params) + ')' : '()';
                 throw (msg);
             }
