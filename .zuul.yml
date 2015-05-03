@@ -1,0 +1,8 @@
+name: WebSocket JSon RPC
+server: test/wsrpc-test-server.js
+ui: mocha-qunit
+browsers:
+    - name: chrome
+      version: 29..latest
+    - name: firefox
+      version: latest
