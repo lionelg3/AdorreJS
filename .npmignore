@@ -2,3 +2,4 @@ test
 .gitignore
 .npmignore
 .*.yml
+.DS_Store

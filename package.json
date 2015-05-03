@@ -1,0 +1,42 @@
+{
+  "name": "WSRpc",
+  "version": "0.9.0",
+  "description": "JSON RPC over WebSocket",
+  "main": "dist/WSRpc.js",
+  "scripts": {
+    "test": "./zuul.sh"
+  },
+  "keywords": [
+    "wsrpc",
+    "framework",
+    "websocket",
+    "json rpc",
+    "jsonrpc",
+    "json-rpc",
+    "events",
+    "realtime",
+    "client",
+    "server"
+  ],
+  "author": "Lionel G. <lionelg3@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lionelg3/WSRpc.git"
+  },
+  "license": "MIT"
+  "devDependencies": {
+    "after": "^0.8.1",
+    "del": "^1.1.1",
+    "gulp": "^3.8.11",
+    "gulp-shell": "^0.4.1",
+    "gulp-sourcemaps": "^1.5.2",
+    "gulp-typescript": "^2.6.0",
+    "phantom": "^0.7.2",
+    "websocket": "^1.0.18",
+    "zuul": "^2.1.1"
+  },
+  "dependencies": {
+    "ws": "^0.7.1"
+  }
+}
