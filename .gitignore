@@ -29,3 +29,5 @@ node_modules
 .DS_Store
 src/*.js
 src/*.js.map
+.idea/*
+*.iml
