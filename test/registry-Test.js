@@ -61,3 +61,49 @@ test('Building and working with class registry', function() {
     }
     assert.equal('ClassRegistry invoke fail on chatroom.print2()', error);
 });
+
+test('Building and working with key registry', function() {
+    var classRegistry = new lg3x.ClassRegistry();
+    classRegistry.register('compteur', sample.Compteur);
+    classRegistry.register('chatroom', sample.Chatroom);
+
+    var r1 = new lg3x.KeyRegistry('lionelg3', classRegistry);
+    var r2 = new lg3x.KeyRegistry('my', classRegistry);
+
+    var r = r1.invoke('compteur', 'increment');
+    assert.equal(r, 0);
+    r = r1.invoke('compteur', 'increment');
+    assert.equal(r, 1);
+    r = r1.invoke('compteur', 'increment');
+    assert.equal(r, 2);
+
+    var r = r2.invoke('compteur', 'increment');
+    assert.equal(r, 0);
+    r = r2.invoke('compteur', 'increment');
+    assert.equal(r, 1);
+    r = r2.invoke('compteur', 'increment');
+    assert.equal(r, 2);
+
+
+    r1.invoke('chatroom', 'say', 'COUCOU2');
+    r1.invoke('chatroom', 'say', 'COUCOU aussi');
+    r1.invoke('chatroom', 'print');
+    assert.equal(r1.invoke('chatroom', 'getMessages').length, 2);
+
+
+    r2.invoke('chatroom', 'say', 'COUCOU2');
+    r2.invoke('chatroom', 'say', 'COUCOU aussi');
+    r2.invoke('chatroom', 'say', 'COUCOU trois');
+    r2.invoke('chatroom', 'print');
+    assert.equal(r2.invoke('chatroom', 'getMessages').length, 3);
+
+    assert.equal(r1.invoke('chatroom', 'getMessages').length, 2);
+
+    var error = null;
+    try {
+        r1.invoke('chatroom', 'print2');
+    } catch(err) {
+        error = err;
+    }
+    assert.equal('KeyRegistry lionelg3 invoke fail on chatroom.print2()', error);
+});
