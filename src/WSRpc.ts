@@ -419,7 +419,7 @@ export module lg3x {
                 }
             };
 
-            this._ws.onmessage = (event) => {
+            this._ws.onmessage = (event: any) => {
                 WSRpcLogging.log('WSRpc', 'onmessage', this._url, event.data);
                 var rpc = JSON.parse(event.data);
                 if (rpc.jsonrpc && rpc.jsonrpc === RPC.VERSION && rpc.id) {
@@ -427,7 +427,7 @@ export module lg3x {
                 }
             };
 
-            this._ws.onerror = (event) => {
+            this._ws.onerror = (event: ErrorEvent) => {
                 WSRpcLogging.log('WSRpc', 'onerror', this._url, event);
                 if (this._onErrorCallback) {
                     setTimeout(this._onErrorCallback(event), 0);
