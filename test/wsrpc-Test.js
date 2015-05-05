@@ -3,27 +3,27 @@ console.log('WSRpc test');
 var assert = require('assert');
 var after = require('after');
 
-var lg3x = require('../dist/WSRpc').lg3x;
-lg3x.DEBUG = true;
+var wsrpc = require('../dist/WSRpc');
+wsrpc.DEBUG = true;
 
 suite('WSRpc');
 
 test('WSRpc connect', function(done) {
     done = after(1, done);
-    var wsrpc = new lg3x.WSRpc('ws://localhost:3000');
-    wsrpc.connect();
+    var _wsrpc = new wsrpc.WSRpc('ws://localhost:3000');
+    _wsrpc.connect();
     setTimeout(function() {
-        wsrpc.close();
+        _wsrpc.close();
         done();
     }, 1000);
 });
 
 test('WSRpc request REPEAT_MY_NAME', function(done) {
     done = after(3, done);
-    var wsrpc = new lg3x.WSRpc('ws://localhost:3000');
-    wsrpc.connect();
+    var _wsrpc = new wsrpc.WSRpc('ws://localhost:3000');
+    _wsrpc.connect();
 
-    wsrpc.onResponse('REPEAT_MY_NAME',
+    _wsrpc.onResponse('REPEAT_MY_NAME',
         function (json) {
             console.log('check name "john doe" equal ' + json.name);
             assert.equal(json.name, 'john doe');
@@ -31,25 +31,25 @@ test('WSRpc request REPEAT_MY_NAME', function(done) {
         }
     );
     setTimeout(function() {
-        wsrpc.doRequest('REPEAT_MY_NAME',
+        _wsrpc.doRequest('REPEAT_MY_NAME',
             JSON.parse('{"name": "john doe"}'));
         done();
     }, 500);
 
     setTimeout(function() {
-        wsrpc.close();
+        _wsrpc.close();
         done();
     }, 1000);
 });
 
 test('WSRpc request REPEAT_THE_DATE', function(done) {
     done = after(2, done);
-    var wsrpc = new lg3x.WSRpc('ws://localhost:3000');
-    wsrpc.connect();
+    var _wsrpc = new wsrpc.WSRpc('ws://localhost:3000');
+    _wsrpc.connect();
 
     setTimeout(function() {
         var d = new Date().getTime();
-        wsrpc.doRequest('REPEAT_THE_DATE',
+        _wsrpc.doRequest('REPEAT_THE_DATE',
             JSON.parse('{"date": "'+d+'"}'),
             function(json) {
                 console.log('check date ' + d + ' equal ' + json.date);
@@ -59,18 +59,18 @@ test('WSRpc request REPEAT_THE_DATE', function(done) {
     }, 500);
 
     setTimeout(function() {
-        wsrpc.close();
+        _wsrpc.close();
         done();
     }, 1000);
 });
 
 test('WSRpc invoke METHOD 1', function(done) {
     done = after(3, done);
-    var wsrpc = new lg3x.WSRpc('ws://localhost:3000');
-    wsrpc.connect();
+    var _wsrpc = new wsrpc.WSRpc('ws://localhost:3000');
+    _wsrpc.connect();
 
     setTimeout(function() {
-        wsrpc.on('HELLO WORLD',
+        _wsrpc.on('HELLO WORLD',
             function (json) {
                 console.log('HELLO WORLD return = ' + json.message);
                 assert.equal(json.message, 'Hello world!');
@@ -78,7 +78,7 @@ test('WSRpc invoke METHOD 1', function(done) {
             }
         );
 
-        wsrpc.call('HELLO WORLD')
+        _wsrpc.call('HELLO WORLD')
             .method('remoteObject.sayHello')
             .withParams(JSON.parse('{"who": "world"}'))
             .now();
@@ -86,18 +86,18 @@ test('WSRpc invoke METHOD 1', function(done) {
     }, 500);
 
     setTimeout(function() {
-        wsrpc.close();
+        _wsrpc.close();
         done();
     }, 1000);
 });
 
 test('WSRpc invoke METHOD 2', function(done) {
     done = after(2, done);
-    var wsrpc = new lg3x.WSRpc('ws://localhost:3000');
-    wsrpc.connect();
+    var _wsrpc = new wsrpc.WSRpc('ws://localhost:3000');
+    _wsrpc.connect();
 
     setTimeout(function() {
-        wsrpc.call()
+        _wsrpc.call()
             .method('remoteObject.sayHelloAll')
             .withParams(JSON.parse('{"who": "world"}'))
             .then(function (json) {
@@ -109,7 +109,7 @@ test('WSRpc invoke METHOD 2', function(done) {
     }, 500);
 
     setTimeout(function() {
-        wsrpc.close();
+        _wsrpc.close();
         done();
     }, 1000);
 });

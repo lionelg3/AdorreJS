@@ -2,21 +2,21 @@ console.log('EventBus test');
 
 var assert = require('assert');
 
-var lg3x = require('../dist/WSRpc').lg3x;
-lg3x.DEBUG = true;
+var wsrpc = require('../dist/WSRpc');
+wsrpc.DEBUG = true;
 
 suite('EventBus');
 
 test('Shared event bus instance are equal', function() {
-    var bus1 = lg3x.EventBus.getSharedEventBus();
-    var bus2 = lg3x.EventBus.getSharedEventBus();
+    var bus1 = wsrpc.EventBus.getSharedEventBus();
+    var bus2 = wsrpc.EventBus.getSharedEventBus();
     assert.equal(bus1, bus2);
 });
 
 test('Invoke one callback without params', function () {
     var myInteger = 0;
     assert.equal(0, myInteger);
-    var bus = lg3x.EventBus.getSharedEventBus();
+    var bus = wsrpc.EventBus.getSharedEventBus();
     bus.on('increment_x', function(params) {
         myInteger ++;
     });
@@ -31,7 +31,7 @@ test('Invoke one callback without params', function () {
 test('Invoke one callback with params', function () {
     var myInteger = 0;
     assert.equal(0, myInteger);
-    var bus = lg3x.EventBus.getSharedEventBus();
+    var bus = wsrpc.EventBus.getSharedEventBus();
     var params = JSON.parse('{"inc": 10}');
     bus.on('increment_x', function(params) {
         myInteger += params.inc;
@@ -50,7 +50,7 @@ test('Invoke with removed callback', function () {
         myInteger += params.inc;
     };
     assert.equal(0, myInteger);
-    var bus = lg3x.EventBus.getSharedEventBus();
+    var bus = wsrpc.EventBus.getSharedEventBus();
     var params = JSON.parse('{"inc": 10}');
     bus.on('increment_x', incFunction);
     bus.fire('increment_x', params);
@@ -68,7 +68,7 @@ test('Invoke with removed callback', function () {
 test('Invoke multiple callback with params', function () {
     var myInteger = 0;
     assert.equal(0, myInteger);
-    var bus = lg3x.EventBus.getSharedEventBus();
+    var bus = wsrpc.EventBus.getSharedEventBus();
     var params = JSON.parse('{"inc": 10}');
     bus.on('increment_x', function(params) {
         myInteger += params.inc;
@@ -91,7 +91,7 @@ test('Invoke multiple callback with params and removed one', function () {
 
     var myInteger = 0;
     assert.equal(0, myInteger);
-    var bus = lg3x.EventBus.getSharedEventBus();
+    var bus = wsrpc.EventBus.getSharedEventBus();
     var params = JSON.parse('{"inc": 10}');
     bus.on('increment_x', function(params) {
         myInteger += params.inc;

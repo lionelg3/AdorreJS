@@ -3,15 +3,15 @@ console.log('RPC test');
 var assert = require('assert');
 var after = require('after');
 
-var lg3x = require('../dist/WSRpc').lg3x;
+var wsrpc = require('../dist/WSRpc');
 var sample = require('./extra/wsrpc_registry_classes').wsrpc_registry_classes;
 
-lg3x.DEBUG = true;
+wsrpc.DEBUG = true;
 
 suite('RPCRegistry');
 
 test('Building and working with object registry', function() {
-    var registry = new lg3x.ObjectRegistry();
+    var registry = new wsrpc.ObjectRegistry();
     registry.register('compteur', sample.Compteur);
     registry.register('chatroom', sample.Chatroom);
 
@@ -37,7 +37,7 @@ test('Building and working with object registry', function() {
 });
 
 test('Building and working with class registry', function() {
-    var registry = new lg3x.ClassRegistry();
+    var registry = new wsrpc.ClassRegistry();
     registry.register('compteur', sample.Compteur);
     registry.register('chatroom', sample.Chatroom);
 
@@ -63,12 +63,12 @@ test('Building and working with class registry', function() {
 });
 
 test('Building and working with key registry', function() {
-    var classRegistry = new lg3x.ClassRegistry();
+    var classRegistry = new wsrpc.ClassRegistry();
     classRegistry.register('compteur', sample.Compteur);
     classRegistry.register('chatroom', sample.Chatroom);
 
-    var r1 = new lg3x.KeyRegistry('lionelg3', classRegistry);
-    var r2 = new lg3x.KeyRegistry('my', classRegistry);
+    var r1 = new wsrpc.KeyRegistry('lionelg3', classRegistry);
+    var r2 = new wsrpc.KeyRegistry('my', classRegistry);
 
     var r = r1.invoke('compteur', 'increment');
     assert.equal(r, 0);
