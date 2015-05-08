@@ -1,12 +1,13 @@
 var WebSocketServer = require('ws').Server,
-    wss = new WebSocketServer({ port: 3000 });
+    server = new WebSocketServer({ port: 3000 });
 
 
-wss.on('connection', function connection(ws) {
+server.on('connection', function connection(ws) {
 
     ws.on('message', function incoming(data) {
         try {
             console.log('incomming data : ' + data);
+            var json = null;
             var response = null;
             var request = JSON.parse(data);
             console.log('Got JSON-RPC request:\n  %s', JSON.stringify(request));
