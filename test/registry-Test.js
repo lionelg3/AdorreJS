@@ -77,7 +77,7 @@ test('Building and working with key registry', function() {
     r = r1.invoke('compteur', 'increment');
     assert.equal(r, 2);
 
-    var r = r2.invoke('compteur', 'increment');
+    r = r2.invoke('compteur', 'increment');
     assert.equal(r, 0);
     r = r2.invoke('compteur', 'increment');
     assert.equal(r, 1);
