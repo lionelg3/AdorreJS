@@ -28,4 +28,23 @@ var wsrpc_registry_classes;
         return Compteur;
     })();
     wsrpc_registry_classes.Compteur = Compteur;
+    var DateUtil = (function () {
+        function DateUtil() {
+            console.log('DateUtil <constructor>');
+        }
+        DateUtil.prototype.getHour = function () {
+            console.log('DateUtil getHour()');
+            return new Date().getHours();
+        };
+        DateUtil.prototype.getMinutes = function () {
+            console.log('DateUtil getMinutes()');
+            return new Date().getMinutes();
+        };
+        DateUtil.prototype.getSecondes = function () {
+            console.log('DateUtil getSecondes()');
+            return new Date().getSeconds();
+        };
+        return DateUtil;
+    })();
+    wsrpc_registry_classes.DateUtil = DateUtil;
 })(wsrpc_registry_classes = exports.wsrpc_registry_classes || (exports.wsrpc_registry_classes = {}));

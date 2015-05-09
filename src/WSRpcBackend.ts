@@ -122,21 +122,12 @@ export class WSRpcBackend {
                 );
             }
             else if (_rpc.isRequest()) {
-                /*
                 this._handler.rpcInvoke(
                     client,
                     _rpc.getNamedInstance(),
                     _rpc.getMethod(),
                     _rpc.getParams(),
                     _rpc.getId()
-                );
-                */
-                this._handler.rpcInvoke(
-                    client,
-                    'compteur',
-                    'increment',
-                    null,
-                    'ID'
                 );
             }
             else if (_rpc.isResponse()) {
