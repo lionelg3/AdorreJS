@@ -62,10 +62,10 @@ var EventBus = (function () {
     return EventBus;
 })();
 exports.EventBus = EventBus;
-var RPCParser = (function () {
-    function RPCParser(rpc) {
+var RpcMessage = (function () {
+    function RpcMessage(rpc) {
         if (rpc.jsonrpc !== '2.0') {
-            throw 'RPC Method Parser Error';
+            throw 'Json-RPC Message Error';
         }
         this._id = rpc.id;
         this._broadcast = false;
@@ -90,42 +90,42 @@ var RPCParser = (function () {
             }
         }
     }
-    RPCParser.prototype.isError = function () {
+    RpcMessage.prototype.isError = function () {
         return (this._code !== undefined);
     };
-    RPCParser.prototype.isRequest = function () {
+    RpcMessage.prototype.isRequest = function () {
         return (this._namedMethod !== undefined);
     };
-    RPCParser.prototype.isResponse = function () {
+    RpcMessage.prototype.isResponse = function () {
         return (this._result != undefined);
     };
-    RPCParser.prototype.getCode = function () {
+    RpcMessage.prototype.getCode = function () {
         return this._code;
     };
-    RPCParser.prototype.getErrorMessage = function () {
+    RpcMessage.prototype.getErrorMessage = function () {
         return this._message;
     };
-    RPCParser.prototype.getResult = function () {
+    RpcMessage.prototype.getResult = function () {
         return this._result;
     };
-    RPCParser.prototype.getParams = function () {
+    RpcMessage.prototype.getParams = function () {
         return this._params;
     };
-    RPCParser.prototype.isBroadcast = function () {
+    RpcMessage.prototype.isBroadcast = function () {
         return this._broadcast;
     };
-    RPCParser.prototype.getMethod = function () {
+    RpcMessage.prototype.getMethod = function () {
         return this._namedMethod;
     };
-    RPCParser.prototype.getNamedInstance = function () {
+    RpcMessage.prototype.getNamedInstance = function () {
         return this._namedInstance;
     };
-    RPCParser.prototype.getId = function () {
+    RpcMessage.prototype.getId = function () {
         return this._id;
     };
-    return RPCParser;
+    return RpcMessage;
 })();
-exports.RPCParser = RPCParser;
+exports.RpcMessage = RpcMessage;
 var ObjectRegistry = (function () {
     function ObjectRegistry() {
         this._objects = {};

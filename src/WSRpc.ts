@@ -105,7 +105,7 @@ export class EventBus {
     }
 }
 
-export class RPCParser {
+export class RpcMessage {
     _code: number;
     _message: string;
     _id: string;
@@ -117,7 +117,7 @@ export class RPCParser {
 
     constructor(rpc) {
         if (rpc.jsonrpc !== '2.0') {
-            throw 'RPC Method Parser Error';
+            throw 'Json-RPC Message Error';
         }
         this._id = rpc.id;
         this._broadcast = false;

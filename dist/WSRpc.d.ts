@@ -41,7 +41,7 @@ export declare class EventBus {
     fire(eventId: string, data?: JSON): void;
     remove(eventId: string, callback: (data: JSON) => void): void;
 }
-export declare class RPCParser {
+export declare class RpcMessage {
     _code: number;
     _message: string;
     _id: string;
