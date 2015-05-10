@@ -91,6 +91,43 @@ test('WSRpcClientCallHandler call stateless', function() {
 
     var h2 = registry.invoke('dateutil', 'getHour', null);
     assert.equal(h1, h2);
+});
 
+
+test('WSRpcClientCallHandler call unknowned instance', function() {
+    var _handler = new wsrpc.WSRpcClientCallHandler();
+
+    // Test stateless unknowned instance
+    var registry = _handler.getRegistry('foo');
+    assert.equal(registry, null);
+
+    var noCatch = null;
+    try {
+        _handler.rpcInvoke(mockClient, 'foo', 'bar', null, 'FOO');
+        noCatch = true;
+    } catch (err) {
+        noCatch = false;
+    }
+    assert.equal(true, noCatch);
+
+    var rpc = new wsrpc.RpcMessage(
+        JSON.parse(
+            '{' +
+                '"jsonrpc":"2.0",' +
+                '"method":"foo.bar",' +
+                '"params":null,' +
+                '"id":"HOUR"' +
+            '}'
+        )
+    );
+
+    noCatch = null;
+    try {
+        _handler.execute(mockClient, rpc);
+        noCatch = true;
+    } catch (err) {
+        noCatch = false;
+    }
+    assert.equal(true, noCatch);
 });
 
