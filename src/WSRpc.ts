@@ -125,10 +125,7 @@ export class RpcMessage {
             this._code = rpc.error.code;
             this._message = rpc.error.message;
         }
-        else if (rpc.result) {
-            this._result = rpc.result;
-        }
-        else {
+        else if (rpc.method) {
             this._params = rpc.params;
             var t = rpc.method.split('.');
             this._namedMethod = t[t.length - 1];
@@ -139,6 +136,9 @@ export class RpcMessage {
             } else {
                 this._namedInstance = t[0];
             }
+        }
+        else {
+            this._result = rpc.result;
         }
     }
 
@@ -151,7 +151,7 @@ export class RpcMessage {
     }
 
     isResponse(): boolean {
-        return (this._result != undefined);
+        return (this._result !== undefined);
     }
 
     getCode(): number {

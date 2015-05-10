@@ -91,15 +91,25 @@ test('Parse JSon Rpc Request', function() {
 });
 
 test('Parse JSon Rpc Response', function() {
-    var resp = JSON.parse('{"jsonrpc":"2.0","result":{"message":"Hello all the world!"},"id":"remoteObject.sayHelloAll:6be5407c-f33f-4935-83d0-901052a96883"}');
+    var resp1 = JSON.parse('{"jsonrpc":"2.0","result":{"message":"Hello all the world!"},"id":"remoteObject.sayHelloAll:6be5407c-f33f-4935-83d0-901052a96883"}');
 
-    var parser = new wsrpc.RpcMessage(resp);
-    assert.equal(parser.getResult().message, 'Hello all the world!');
-    assert.equal(parser.getId(), 'remoteObject.sayHelloAll:6be5407c-f33f-4935-83d0-901052a96883');
-    assert.equal(parser.isRequest(), false);
-    assert.equal(parser.isResponse(), true);
-    assert.equal(parser.isBroadcast(), false);
-    assert.equal(parser.isError(), false);
+    var parser1 = new wsrpc.RpcMessage(resp1);
+    assert.equal(parser1.getResult().message, 'Hello all the world!');
+    assert.equal(parser1.getId(), 'remoteObject.sayHelloAll:6be5407c-f33f-4935-83d0-901052a96883');
+    assert.equal(parser1.isRequest(), false);
+    assert.equal(parser1.isResponse(), true);
+    assert.equal(parser1.isBroadcast(), false);
+    assert.equal(parser1.isError(), false);
+
+    var resp2 = JSON.parse('{"jsonrpc":"2.0","result":null,"id":"INC"}');
+
+    var parser2 = new wsrpc.RpcMessage(resp2);
+    assert.equal(parser2.getResult(), null);
+    assert.equal(parser2.getId(), 'INC');
+    assert.equal(parser2.isRequest(), false);
+    assert.equal(parser2.isResponse(), true);
+    assert.equal(parser2.isBroadcast(), false);
+    assert.equal(parser2.isError(), false);
 });
 
 test('Parse JSon Rpc Error', function() {
