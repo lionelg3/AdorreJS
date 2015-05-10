@@ -116,7 +116,27 @@ test('WSRpcClientCallHandler call unknowned instance', function() {
                 '"jsonrpc":"2.0",' +
                 '"method":"foo.bar",' +
                 '"params":null,' +
-                '"id":"HOUR"' +
+                '"id":"FOO.BAR"' +
+            '}'
+        )
+    );
+
+    noCatch = null;
+    try {
+        _handler.execute(mockClient, rpc);
+        noCatch = true;
+    } catch (err) {
+        noCatch = false;
+    }
+    assert.equal(true, noCatch);
+
+    rpc = new wsrpc.RpcMessage(
+        JSON.parse(
+            '{' +
+                '"jsonrpc":"2.0",' +
+                '"method":"foo_bar",' +
+                '"params":null,' +
+                '"id":"FOO_BAR"' +
             '}'
         )
     );

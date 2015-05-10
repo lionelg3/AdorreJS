@@ -1,10 +1,11 @@
 var assert = require("assert");
 
-var WebSocketServer = require('ws').Server;
+//var WebSocketServer = require('ws').Server;
 var wsrpc = require('../../dist/WSRpc');
 var wsrpcBackend = require('../../dist/WSRpcBackend');
 var sample = require('..//extra/wsrpc_registry_classes').wsrpc_registry_classes;
 
+wsrpcBackend.DEBUG = true;
 
 var mockClient = {
     jsonRpcMessage: null,

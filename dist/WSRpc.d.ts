@@ -59,6 +59,7 @@ export declare class RpcMessage {
     _broadcast: boolean;
     _namedMethod: string;
     _namedInstance: string;
+    _namedAction: string;
     _result: JSON;
     _params: JSON;
     constructor(rpc: any);
@@ -71,7 +72,8 @@ export declare class RpcMessage {
     getParams(): JSON;
     isBroadcast(): boolean;
     getMethod(): string;
-    getNamedInstance(): string;
+    getInstance(): string;
+    getAction(): string;
     getId(): string;
 }
 export declare class ObjectRegistry implements api.IRPCRegistry {

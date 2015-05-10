@@ -86,7 +86,7 @@ export class WSRpcClientCallHandler {
     public execute(client: WebSocket, rpc: RpcMessage) {
         this.rpcInvoke(
             client,
-            rpc.getNamedInstance(),
+            rpc.getInstance(),
             rpc.getMethod(),
             rpc.getParams(),
             rpc.getId()
@@ -180,6 +180,7 @@ export class RpcMessage {
     _broadcast: boolean;
     _namedMethod: string;
     _namedInstance: string;
+    _namedAction: string;
     _result: JSON;
     _params: JSON;
 
@@ -196,13 +197,24 @@ export class RpcMessage {
         else if (rpc.method) {
             this._params = rpc.params;
             var t = rpc.method.split('.');
-            this._namedMethod = t[t.length - 1];
-            this._namedInstance = null;
-            if (t[0].split('}')[0] === '{broadcast') {
-                this._broadcast = true;
-                this._namedInstance = t[0].split('}')[1];
+            if (t.length == 2) {
+                this._namedAction = null;
+                this._namedMethod = t[t.length - 1];
+                if (t[0].split('}')[0] === '{broadcast') {
+                    this._broadcast = true;
+                    this._namedInstance = t[0].split('}')[1];
+                } else {
+                    this._namedInstance = t[0];
+                }
             } else {
-                this._namedInstance = t[0];
+                this._namedInstance = null;
+                this._namedMethod = null;
+                if (t[0].split('}')[0] === '{broadcast') {
+                    this._broadcast = true;
+                    this._namedAction = t[0].split('}')[1];
+                } else {
+                    this._namedAction = t[0];
+                }
             }
         }
         else {
@@ -215,7 +227,7 @@ export class RpcMessage {
     }
 
     isRequest(): boolean {
-        return (this._namedMethod !== undefined);
+        return (this._namedMethod !== undefined || this._namedAction !== undefined);
     }
 
     isResponse(): boolean {
@@ -246,8 +258,12 @@ export class RpcMessage {
         return this._namedMethod;
     }
 
-    getNamedInstance(): string {
+    getInstance(): string {
         return this._namedInstance;
+    }
+
+    getAction(): string {
+        return this._namedAction;
     }
 
     getId(): string {

@@ -37,7 +37,7 @@ var WSRpcClientCallHandler = (function () {
         return null;
     };
     WSRpcClientCallHandler.prototype.execute = function (client, rpc) {
-        this.rpcInvoke(client, rpc.getNamedInstance(), rpc.getMethod(), rpc.getParams(), rpc.getId());
+        this.rpcInvoke(client, rpc.getInstance(), rpc.getMethod(), rpc.getParams(), rpc.getId());
     };
     WSRpcClientCallHandler.prototype.rpcInvoke = function (client, instance, method, params, id) {
         if (this._names[instance]) {
@@ -125,14 +125,27 @@ var RpcMessage = (function () {
         else if (rpc.method) {
             this._params = rpc.params;
             var t = rpc.method.split('.');
-            this._namedMethod = t[t.length - 1];
-            this._namedInstance = null;
-            if (t[0].split('}')[0] === '{broadcast') {
-                this._broadcast = true;
-                this._namedInstance = t[0].split('}')[1];
+            if (t.length == 2) {
+                this._namedAction = null;
+                this._namedMethod = t[t.length - 1];
+                if (t[0].split('}')[0] === '{broadcast') {
+                    this._broadcast = true;
+                    this._namedInstance = t[0].split('}')[1];
+                }
+                else {
+                    this._namedInstance = t[0];
+                }
             }
             else {
-                this._namedInstance = t[0];
+                this._namedInstance = null;
+                this._namedMethod = null;
+                if (t[0].split('}')[0] === '{broadcast') {
+                    this._broadcast = true;
+                    this._namedAction = t[0].split('}')[1];
+                }
+                else {
+                    this._namedAction = t[0];
+                }
             }
         }
         else {
@@ -143,7 +156,7 @@ var RpcMessage = (function () {
         return (this._code !== undefined);
     };
     RpcMessage.prototype.isRequest = function () {
-        return (this._namedMethod !== undefined);
+        return (this._namedMethod !== undefined || this._namedAction !== undefined);
     };
     RpcMessage.prototype.isResponse = function () {
         return (this._result !== undefined);
@@ -166,8 +179,11 @@ var RpcMessage = (function () {
     RpcMessage.prototype.getMethod = function () {
         return this._namedMethod;
     };
-    RpcMessage.prototype.getNamedInstance = function () {
+    RpcMessage.prototype.getInstance = function () {
         return this._namedInstance;
+    };
+    RpcMessage.prototype.getAction = function () {
+        return this._namedAction;
     };
     RpcMessage.prototype.getId = function () {
         return this._id;
