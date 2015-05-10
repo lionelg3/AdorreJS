@@ -4,14 +4,33 @@
 import ws = require('ws');
 import rpc = require('./WSRpc');
 
+export var DEBUG: boolean = false;
 
-export class WSRpcBackend {
+export module api {
+
+    export interface IWSRpcBackend {
+        start(server: ws.Server);
+        singleton(instanceName: string, classNames: any);
+        stateless(instanceName: string, classNames: any);
+        statefull(instanceName: string, classNames: any);
+    }
+}
+
+class WSRpcLogging {
+    static log(...args: any[]) {
+        if (DEBUG) {
+            console.debug.apply(console, args);
+        }
+    }
+}
+
+export class WSRpcBackend implements api.IWSRpcBackend {
 
     private _server: ws.Server;
-    private _handler: WSRpcBackendCallHandler;
+    private _handler: WSRpcServerCallHandler;
 
     constructor() {
-        this._handler = new WSRpcBackendCallHandler();
+        this._handler = new WSRpcServerCallHandler();
     }
 
     public start(server: ws.Server) {
@@ -72,36 +91,36 @@ export class WSRpcBackend {
     }
 
     private _onClientClose(client: WebSocket, code: number, message: string) {
-        console.log('Client close code ' + code + ", message " + message);
+        WSRpcLogging.log('Client close code ' + code + ", message " + message);
     }
 
     private _onClientPingPongMessage(client: WebSocket, data: any, flags: {binary: boolean}, ping: boolean) {
-        console.log('Ping Pong ' + data);
+        WSRpcLogging.log('Ping Pong ' + data);
     }
 
     private _onClientError(client: WebSocket, err: Error) {
-        console.log('Client error ' + err);
+        WSRpcLogging.log('Client error ' + err);
     }
 
     private _onClientOpen(client: WebSocket) {
-        console.log('Client open ');
+        WSRpcLogging.log('Client open ');
     }
 
     private _onServerError(err: Error) {
-        console.log('Server err ' + err);
+        WSRpcLogging.log('Server err ' + err);
     }
 
     private _onServerHeaders(headers: string[]) {
-        console.log('Server headers ');
+        WSRpcLogging.log('Server headers ');
         headers.forEach(function (h) {
-            console.log(h)
+            WSRpcLogging.log(h)
         });
     }
 
     public _onClientMessage(client: WebSocket, data: any, flags: {binary: boolean}) {
-        console.log('>> ' + data);
+        WSRpcLogging.log('>> ' + data);
         try {
-            var _rpc: rpc.RPCParser = new rpc.RPCParser(JSON.parse(data));
+            var _rpc: rpc.RpcMessage = new rpc.RpcMessage(JSON.parse(data));
             if (_rpc.isBroadcast() && _rpc.isRequest()) {
                 this._handler.broadcastRpcInvoke(
                     client,
@@ -146,7 +165,7 @@ export class WSRpcBackend {
     }
 }
 
-class WSRpcBackendCallHandler {
+export class WSRpcServerCallHandler {
 
     private _singleton: rpc.ObjectRegistry;
     private _stateless: rpc.ClassRegistry;
@@ -172,44 +191,47 @@ class WSRpcBackendCallHandler {
         console.warn('Session objects not implemented yet !');
     }
 
+    public getRegistry(instanceName: string): rpc.api.IRPCRegistry {
+        if (this._names[instanceName] === this._singleton) {
+            return this._singleton;
+        }
+        else if (this._names[instanceName] === this._stateless) {
+            return this._stateless;
+        }
+        return null;
+    }
+
     public rpcInvoke(client: WebSocket, instance: string, method: string, params: JSON, id: string) {
         if (this._names[instance]) {
             var registry: rpc.api.IRPCRegistry = null;
             if (this._names[instance] === this._singleton) {
-                console.log('::_singleton');
                 registry = this._singleton;
             }
             else if (this._names[instance] === this._stateless) {
-                console.log('::_stateless');
                 registry = this._stateless;
             }
-            console.log('::'+instance+'.'+method+'('+params+') : ' +id);
             var result: JSON = registry.invoke(instance, method, params);
-            console.log('<<'+JSON.stringify(rpc.RPC.Response(id, result)));
             client.send(JSON.stringify(rpc.RPC.Response(id, result)));
         }
         else {
-            console.log('RPC instance named ' + instance + ' not found.');
             client.send(
                 JSON.stringify(
-                    rpc.RPC.Error(id, rpc.RPC.METHOD_NOT_FOUND, 'RPC instance named ' + instance + ' not found.')
+                    rpc.RPC.Error(id, rpc.RPC.METHOD_NOT_FOUND, 'RPC server instance named ' + instance + ' not found.')
                 )
             );
         }
     }
 
     public broadcastRpcInvoke(client: WebSocket, instance: string, method: string, params: JSON, id: string) {
-        console.warn('Not implemented yet !');
+        WSRpcLogging.log('Not implemented yet !');
     }
 
-    public broadcastResponseToOrigin(rpc: rpc.RPCParser) {
-        console.warn('Not implemented yet !');
-
+    public broadcastResponseToOrigin(rpc: rpc.RpcMessage) {
+        WSRpcLogging.log('Not implemented yet !');
     }
 
-    public receiveClientError(rpc: rpc.RPCParser) {
-        console.warn('Not implemented yet !');
-
+    public receiveClientError(rpc: rpc.RpcMessage) {
+        WSRpcLogging.log('Not implemented yet !');
     }
 
     public hasPendingResponseWithId(id: string): boolean {
