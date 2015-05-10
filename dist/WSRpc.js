@@ -13,6 +13,55 @@ var UUIDGenerator = (function () {
     return UUIDGenerator;
 })();
 exports.UUIDGenerator = UUIDGenerator;
+var WSRpcClientCallHandler = (function () {
+    function WSRpcClientCallHandler() {
+        this._names = {};
+        this._singleton = new ObjectRegistry();
+        this._stateless = new ClassRegistry();
+    }
+    WSRpcClientCallHandler.prototype.singleton = function (instanceName, classNames) {
+        this._names[instanceName] = this._singleton;
+        this._singleton.register(instanceName, classNames);
+    };
+    WSRpcClientCallHandler.prototype.stateless = function (instanceName, classNames) {
+        this._names[instanceName] = this._stateless;
+        this._stateless.register(instanceName, classNames);
+    };
+    WSRpcClientCallHandler.prototype.getRegistry = function (instanceName) {
+        if (this._names[instanceName] === this._singleton) {
+            return this._singleton;
+        }
+        else if (this._names[instanceName] === this._stateless) {
+            return this._stateless;
+        }
+        return null;
+    };
+    WSRpcClientCallHandler.prototype.execute = function (client, rpc) {
+        this.rpcInvoke(client, rpc.getNamedInstance(), rpc.getMethod(), rpc.getParams(), rpc.getId());
+    };
+    WSRpcClientCallHandler.prototype.rpcInvoke = function (client, instance, method, params, id) {
+        if (this._names[instance]) {
+            var registry = null;
+            if (this._names[instance] === this._singleton) {
+                WSRpcLogging.log(':registry:_singleton');
+                registry = this._singleton;
+            }
+            else if (this._names[instance] === this._stateless) {
+                WSRpcLogging.log(':registry:_stateless');
+                registry = this._stateless;
+            }
+            WSRpcLogging.log(':invoke:' + instance + '.' + method + '(' + params + ') : ' + id);
+            var result = registry.invoke(instance, method, params);
+            WSRpcLogging.log(':response:' + JSON.stringify(RPC.Response(id, result)));
+            client.send(JSON.stringify(RPC.Response(id, result)));
+        }
+        else {
+            client.send(JSON.stringify(RPC.Error(id, RPC.METHOD_NOT_FOUND, 'RPC client instance named ' + instance + ' not found.')));
+        }
+    };
+    return WSRpcClientCallHandler;
+})();
+exports.WSRpcClientCallHandler = WSRpcClientCallHandler;
 var EventBus = (function () {
     function EventBus() {
         this.listeners = {};
@@ -73,10 +122,7 @@ var RpcMessage = (function () {
             this._code = rpc.error.code;
             this._message = rpc.error.message;
         }
-        else if (rpc.result) {
-            this._result = rpc.result;
-        }
-        else {
+        else if (rpc.method) {
             this._params = rpc.params;
             var t = rpc.method.split('.');
             this._namedMethod = t[t.length - 1];
@@ -89,6 +135,9 @@ var RpcMessage = (function () {
                 this._namedInstance = t[0];
             }
         }
+        else {
+            this._result = rpc.result;
+        }
     }
     RpcMessage.prototype.isError = function () {
         return (this._code !== undefined);
@@ -97,7 +146,7 @@ var RpcMessage = (function () {
         return (this._namedMethod !== undefined);
     };
     RpcMessage.prototype.isResponse = function () {
-        return (this._result != undefined);
+        return (this._result !== undefined);
     };
     RpcMessage.prototype.getCode = function () {
         return this._code;
@@ -187,7 +236,6 @@ var KeyRegistry = (function () {
         try {
             var instance = this._objects[this._key + ':' + name];
             if (!instance) {
-                console.log('create instance');
                 var className = this._classRegistry.get(name);
                 this._objects[this._key + ':' + name] = new className();
                 instance = this._objects[this._key + ':' + name];
@@ -350,8 +398,12 @@ var WSRpc = (function () {
         this._ws.onmessage = function (event) {
             WSRpcLogging.log('WSRpc', 'onmessage', _this._url, event.data);
             var rpc = JSON.parse(event.data);
-            if (rpc.jsonrpc && rpc.jsonrpc === RPC.VERSION && rpc.id) {
+            var _rpcMessage = new RpcMessage(rpc);
+            if (_rpcMessage.getId()) {
                 EventBus.getSharedEventBus().fire(rpc.id, rpc.result);
+            }
+            if (_rpcMessage.isRequest()) {
+                _this._handler.execute(_this._ws, _rpcMessage);
             }
         };
         this._ws.onerror = function (event) {
@@ -360,6 +412,7 @@ var WSRpc = (function () {
                 setTimeout(_this._onErrorCallback(event), 0);
             }
         };
+        this._handler = new WSRpcClientCallHandler();
     };
     WSRpc.prototype.close = function () {
         if (this._ws) {
@@ -436,6 +489,12 @@ var WSRpc = (function () {
                 eventBus.on(action, callbacks[x]);
             }
         }
+    };
+    WSRpc.prototype.singleton = function (instanceName, classNames) {
+        this._handler.singleton(instanceName, classNames);
+    };
+    WSRpc.prototype.stateless = function (instanceName, classNames) {
+        this._handler.stateless(instanceName, classNames);
     };
     return WSRpc;
 })();

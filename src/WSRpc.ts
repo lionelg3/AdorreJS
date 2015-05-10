@@ -51,6 +51,74 @@ export class UUIDGenerator {
     }
 }
 
+export class WSRpcClientCallHandler {
+
+    private _singleton: ObjectRegistry;
+    private _stateless: ClassRegistry;
+    private _names: { [name: string]: Object };
+
+    constructor() {
+        this._names = {};
+        this._singleton = new ObjectRegistry();
+        this._stateless = new ClassRegistry();
+    }
+
+    public singleton(instanceName: string, classNames: any) {
+        this._names[instanceName] = this._singleton;
+        this._singleton.register(instanceName, classNames);
+    }
+
+    public stateless(instanceName: string, classNames: any) {
+        this._names[instanceName] = this._stateless;
+        this._stateless.register(instanceName, classNames);
+    }
+
+    public getRegistry(instanceName: string): api.IRPCRegistry {
+        if (this._names[instanceName] === this._singleton) {
+            return this._singleton;
+        }
+        else if (this._names[instanceName] === this._stateless) {
+            return this._stateless;
+        }
+        return null;
+    }
+
+    public execute(client: WebSocket, rpc: RpcMessage) {
+        this.rpcInvoke(
+            client,
+            rpc.getNamedInstance(),
+            rpc.getMethod(),
+            rpc.getParams(),
+            rpc.getId()
+        );
+    }
+
+    public rpcInvoke(client: WebSocket, instance: string, method: string, params: JSON, id: string) {
+        if (this._names[instance]) {
+            var registry: api.IRPCRegistry = null;
+            if (this._names[instance] === this._singleton) {
+                WSRpcLogging.log(':registry:_singleton');
+                registry = this._singleton;
+            }
+            else if (this._names[instance] === this._stateless) {
+                WSRpcLogging.log(':registry:_stateless');
+                registry = this._stateless;
+            }
+            WSRpcLogging.log(':invoke:'+instance+'.'+method+'('+params+') : ' +id);
+            var result: JSON = registry.invoke(instance, method, params);
+            WSRpcLogging.log(':response:'+JSON.stringify(RPC.Response(id, result)));
+            client.send(JSON.stringify(RPC.Response(id, result)));
+        }
+        else {
+            client.send(
+                JSON.stringify(
+                    RPC.Error(id, RPC.METHOD_NOT_FOUND, 'RPC client instance named ' + instance + ' not found.')
+                )
+            );
+        }
+    }
+}
+
 export class EventBus {
 
     private static _instance: EventBus = null;
@@ -252,7 +320,6 @@ export class KeyRegistry implements api.IRPCRegistry {
         try {
             var instance = this._objects[this._key + ':' + name];
             if (!instance) {
-                console.log('create instance');
                 var className = this._classRegistry.get(name);
                 this._objects[this._key + ':' + name] = new className();
                 instance = this._objects[this._key + ':' + name];
@@ -385,6 +452,7 @@ export class WSRpc implements api.IWSRpc {
 
     private _ws: WebSocket;
     private _url: string;
+    private _handler: WSRpcClientCallHandler;
 
     private _onOpenCallback: (event: Event) => void;
     private _onCloseCallback: (event: CloseEvent) => void;
@@ -420,8 +488,12 @@ export class WSRpc implements api.IWSRpc {
         this._ws.onmessage = (event: any) => {
             WSRpcLogging.log('WSRpc', 'onmessage', this._url, event.data);
             var rpc = JSON.parse(event.data);
-            if (rpc.jsonrpc && rpc.jsonrpc === RPC.VERSION && rpc.id) {
+            var _rpcMessage: RpcMessage = new RpcMessage(rpc);
+            if (_rpcMessage.getId()) {
                 EventBus.getSharedEventBus().fire(rpc.id, rpc.result);
+            }
+            if (_rpcMessage.isRequest()) {
+                this._handler.execute(this._ws, _rpcMessage);
             }
         };
 
@@ -431,6 +503,8 @@ export class WSRpc implements api.IWSRpc {
                 setTimeout(this._onErrorCallback(event), 0);
             }
         };
+
+        this._handler = new WSRpcClientCallHandler();
     }
 
     public close():boolean {
@@ -503,5 +577,13 @@ export class WSRpc implements api.IWSRpc {
                 eventBus.on(action, callbacks[x]);
             }
         }
+    }
+
+    singleton(instanceName: string, classNames: any) {
+        this._handler.singleton(instanceName, classNames);
+    }
+
+    stateless(instanceName: string, classNames: any) {
+        this._handler.stateless(instanceName, classNames);
     }
 }

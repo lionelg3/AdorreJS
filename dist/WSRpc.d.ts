@@ -32,6 +32,17 @@ export declare module api {
 export declare class UUIDGenerator {
     static generateUUID(): string;
 }
+export declare class WSRpcClientCallHandler {
+    private _singleton;
+    private _stateless;
+    private _names;
+    constructor();
+    singleton(instanceName: string, classNames: any): void;
+    stateless(instanceName: string, classNames: any): void;
+    getRegistry(instanceName: string): api.IRPCRegistry;
+    execute(client: WebSocket, rpc: RpcMessage): void;
+    rpcInvoke(client: WebSocket, instance: string, method: string, params: JSON, id: string): void;
+}
 export declare class EventBus {
     private static _instance;
     private listeners;
@@ -145,6 +156,7 @@ export declare class WSRpcMethodRequest implements api.IWSRpcMethodRequest {
 export declare class WSRpc implements api.IWSRpc {
     private _ws;
     private _url;
+    private _handler;
     private _onOpenCallback;
     private _onCloseCallback;
     private _onErrorCallback;
@@ -160,4 +172,6 @@ export declare class WSRpc implements api.IWSRpc {
     on(about: string, ...callbacks: ((data: JSON) => void)[]): void;
     doRequest(action: string, data: JSON, ...callbacks: ((data: JSON) => void)[]): void;
     onResponse(action: string, ...callbacks: ((data: JSON) => void)[]): void;
+    singleton(instanceName: string, classNames: any): void;
+    stateless(instanceName: string, classNames: any): void;
 }
