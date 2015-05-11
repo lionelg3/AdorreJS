@@ -506,7 +506,7 @@ export class WSRpc implements api.IWSRpc {
             var rpc = JSON.parse(event.data);
             var _rpcMessage: RpcMessage = new RpcMessage(rpc);
             if (_rpcMessage.getId()) {
-                EventBus.getSharedEventBus().fire(rpc.id, rpc.result);
+                EventBus.getSharedEventBus().fire(rpc.id, (rpc.result) ? rpc.result : rpc.error);
             }
             if (_rpcMessage.isRequest()) {
                 this._handler.execute(this._ws, _rpcMessage);
