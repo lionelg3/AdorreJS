@@ -1,8 +1,9 @@
 var WebSocketServer = require('ws').Server,
-    server = new WebSocketServer({ port: 3000 });
+    server3000 = new WebSocketServer({ port: 3000 }),
+    server3001 = new WebSocketServer({ port: 3001 });
 
 
-server.on('connection', function connection(ws) {
+server3000.on('connection', function connection(ws) {
 
     ws.on('message', function incoming(data) {
         try {
@@ -74,3 +75,20 @@ server.on('connection', function connection(ws) {
 });
 
 console.log('WebSocketServer listening on port 3000');
+
+
+// ===================== Backend Server ===================
+
+var sample = require('./extra/wsrpc_registry_classes').wsrpc_registry_classes;
+var backend = require('../dist/WSRpcBackend');
+var _backend = new backend.WSRpcBackend();
+
+backend.DEBUG = true;
+
+_backend.singleton('compteur', sample.Compteur);
+_backend.singleton('chatroom', sample.Chatroom);
+_backend.stateless('dateutil', sample.DateUtil);
+
+_backend.start(server3001);
+
+console.log('WebSocketServer listening on port 3001');
