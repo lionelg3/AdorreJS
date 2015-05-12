@@ -392,6 +392,7 @@ var WSRpc = (function () {
     function WSRpc(url) {
         this._url = url;
         this._ws = null;
+        this._handler = new WSRpcClientCallHandler();
     }
     WSRpc.prototype.connect = function () {
         var _this = this;

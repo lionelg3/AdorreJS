@@ -478,6 +478,7 @@ export class WSRpc implements api.IWSRpc {
     constructor(url: string) {
         this._url = url;
         this._ws = null;
+        this._handler = new WSRpcClientCallHandler();
     }
 
     public connect() {
