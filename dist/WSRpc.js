@@ -84,7 +84,6 @@ var EventBus = (function () {
         this.listeners[eventId].push(callback);
     };
     EventBus.prototype.fire = function (eventId, data) {
-        console.log('___FIRE ' + JSON.stringify(data));
         for (var x in this.listeners[eventId]) {
             var method = this.listeners[eventId][x];
             if (method) {
@@ -392,6 +391,7 @@ exports.WSRpcMethodRequest = WSRpcMethodRequest;
 var WSRpc = (function () {
     function WSRpc(url) {
         this._url = url;
+        this._ws = null;
     }
     WSRpc.prototype.connect = function () {
         var _this = this;
@@ -430,6 +430,9 @@ var WSRpc = (function () {
             }
         };
         this._handler = new WSRpcClientCallHandler();
+    };
+    WSRpc.prototype.ready = function () {
+        return (this._ws != null);
     };
     WSRpc.prototype.close = function () {
         if (this._ws) {

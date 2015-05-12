@@ -165,6 +165,7 @@ export declare class WSRpc implements api.IWSRpc {
     private _onConnectCallback;
     constructor(url: string);
     connect(): void;
+    ready(): boolean;
     close(): boolean;
     onOpen(callback: (event: Event) => void): void;
     onClose(callback: (event: CloseEvent) => void): void;
