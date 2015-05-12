@@ -84,6 +84,7 @@ var EventBus = (function () {
         this.listeners[eventId].push(callback);
     };
     EventBus.prototype.fire = function (eventId, data) {
+        console.log('___FIRE ' + JSON.stringify(data));
         for (var x in this.listeners[eventId]) {
             var method = this.listeners[eventId][x];
             if (method) {
@@ -416,7 +417,7 @@ var WSRpc = (function () {
             var rpc = JSON.parse(event.data);
             var _rpcMessage = new RpcMessage(rpc);
             if (_rpcMessage.getId()) {
-                EventBus.getSharedEventBus().fire(rpc.id, rpc.result);
+                EventBus.getSharedEventBus().fire(rpc.id, (rpc.result) ? rpc.result : rpc.error);
             }
             if (_rpcMessage.isRequest()) {
                 _this._handler.execute(_this._ws, _rpcMessage);

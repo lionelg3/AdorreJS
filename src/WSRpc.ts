@@ -477,6 +477,7 @@ export class WSRpc implements api.IWSRpc {
 
     constructor(url: string) {
         this._url = url;
+        this._ws = null;
     }
 
     public connect() {
@@ -523,7 +524,11 @@ export class WSRpc implements api.IWSRpc {
         this._handler = new WSRpcClientCallHandler();
     }
 
-    public close():boolean {
+    ready(): boolean {
+        return (this._ws != null);
+    }
+
+    close(): boolean {
         if (this._ws) {
             this._ws.close();
             this._ws = null;
