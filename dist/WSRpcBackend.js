@@ -25,7 +25,7 @@ var WSRpcBackend = (function () {
     function WSRpcBackend() {
         this._handler = new WSRpcServerCallHandler();
     }
-    WSRpcBackend.prototype.start = function (server) {
+    WSRpcBackend.prototype.link = function (server) {
         var _this = this;
         this._server = server;
         this._server.on('error', function (err) {

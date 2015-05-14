@@ -5,7 +5,7 @@ import rpc = require('./WSRpc');
 export declare var DEBUG: boolean;
 export declare module api {
     interface IWSRpcBackend {
-        start(server: ws.Server): any;
+        link(server: ws.Server): any;
         singleton(instanceName: string, classNames: any): any;
         stateless(instanceName: string, classNames: any): any;
         statefull(instanceName: string, classNames: any): any;
@@ -15,7 +15,7 @@ export declare class WSRpcBackend implements api.IWSRpcBackend {
     private _server;
     private _handler;
     constructor();
-    start(server: ws.Server): void;
+    link(server: ws.Server): void;
     singleton(instanceName: string, classNames: any): void;
     stateless(instanceName: string, classNames: any): void;
     statefull(instanceName: string, classNames: any): void;

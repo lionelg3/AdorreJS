@@ -9,7 +9,7 @@ export var DEBUG: boolean = false;
 export module api {
 
     export interface IWSRpcBackend {
-        start(server: ws.Server);
+        link(server: ws.Server);
         singleton(instanceName: string, classNames: any);
         stateless(instanceName: string, classNames: any);
         statefull(instanceName: string, classNames: any);
@@ -36,7 +36,7 @@ export class WSRpcBackend implements api.IWSRpcBackend {
         this._handler = new WSRpcServerCallHandler();
     }
 
-    public start(server: ws.Server) {
+    public link(server: ws.Server) {
         this._server = server;
         this._server.on('error', (err: Error) => {
                 this._onServerError(err);

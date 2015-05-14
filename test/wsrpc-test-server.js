@@ -89,6 +89,6 @@ _backend.singleton('compteur', sample.Compteur);
 _backend.singleton('chatroom', sample.Chatroom);
 _backend.stateless('dateutil', sample.DateUtil);
 
-_backend.start(server3001);
+_backend.link(server3001);
 
 console.log('WebSocketServer listening on port 3001');
