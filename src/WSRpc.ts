@@ -521,8 +521,6 @@ export class WSRpc implements api.IWSRpc {
                 setTimeout(this._onErrorCallback(event), 0);
             }
         };
-
-        this._handler = new WSRpcClientCallHandler();
     }
 
     ready(): boolean {
