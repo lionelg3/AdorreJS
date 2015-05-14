@@ -430,7 +430,6 @@ var WSRpc = (function () {
                 setTimeout(_this._onErrorCallback(event), 0);
             }
         };
-        this._handler = new WSRpcClientCallHandler();
     };
     WSRpc.prototype.ready = function () {
         return (this._ws != null);
