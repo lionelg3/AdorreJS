@@ -1,11 +1,11 @@
-console.log('WSRpc2 test');
+console.log('WSRpcFrontend test');
 
 var WS_PORT = 3000;
 
 var assert = require('assert');
 var after = require('after');
 
-var wrc = require('../../dist/WSRpc2');
+var wrc = require('../../dist/WSRpcFrontend');
 var bus = require('../../dist/EventBus');
 var reg = require('../../dist/Registry');
 var jrpc = require('../../dist/JsonRpc');
@@ -14,7 +14,7 @@ var sample = require('./../extra/wsrpc_registry_classes').wsrpc_registry_classes
 
 wrc.DEBUG = true;
 
-suite('WSRpc2');
+suite('WSRpcFrontend');
 
 test('WebSocket client connect', function (done) {
     done = after(2, done);
@@ -26,10 +26,10 @@ test('WebSocket client connect', function (done) {
     }, 1000);
 });
 
-test('WSRpc2 link', function (done) {
+test('WSRpcFrontend link', function (done) {
     done = after(4, done);
     var _ws = new WebSocket('ws://localhost:' + WS_PORT);
-    var _wrc = new wrc.WSRpc2();
+    var _wrc = new wrc.WSRpcFrontend();
     try {
         _wrc.link(null);
     } catch (err) {
@@ -59,7 +59,7 @@ test('WSRpc2 link', function (done) {
 test('WSRpc fire call', function (done) {
     done = after(3, done);
     var ws = new WebSocket('ws://localhost:' + WS_PORT);
-    var _wrc = new wrc.WSRpc2();
+    var _wrc = new wrc.WSRpcFrontend();
     _wrc.link(ws);
     done();
 
@@ -84,7 +84,7 @@ test('WSRpc broadcast call', function (done) {
     done = after(6, done);
     var counter = 0;
     var ws = new WebSocket('ws://localhost:' + WS_PORT);
-    var _wrc = new wrc.WSRpc2();
+    var _wrc = new wrc.WSRpcFrontend();
     _wrc.link(ws);
     done();
 
@@ -110,7 +110,7 @@ test('WSRpc broadcast call', function (done) {
 test('WSRpc create failed call', function (done) {
     done = after(3, done);
     var ws = new WebSocket('ws://localhost:' + WS_PORT);
-    var _wrc = new wrc.WSRpc2();
+    var _wrc = new wrc.WSRpcFrontend();
     _wrc.link(ws);
     done();
 
@@ -135,7 +135,7 @@ test('WSRpc create failed call', function (done) {
 });
 
 test('WSRpc simulate singleton handler', function () {
-    var _wrc = new wrc.WSRpc2();
+    var _wrc = new wrc.WSRpcFrontend();
     _wrc.singleton('compteur', sample.Compteur);
 
     var __message = null;
@@ -156,7 +156,7 @@ test('WSRpc simulate singleton handler', function () {
 });
 
 test('WSRpc simulate stateless handler', function () {
-    var _wrc = new wrc.WSRpc2();
+    var _wrc = new wrc.WSRpcFrontend();
     _wrc.stateless('compteur', sample.Compteur);
 
     var __message = null;
@@ -179,7 +179,7 @@ test('WSRpc simulate stateless handler', function () {
 test('WSRpc use client handler', function (done) {
     done = after(3, done);
     var ws = new WebSocket('ws://localhost:' + WS_PORT);
-    var _wrc = new wrc.WSRpc2();
+    var _wrc = new wrc.WSRpcFrontend();
     _wrc.link(ws);
     _wrc.singleton('compteur', sample.Compteur);
     done();

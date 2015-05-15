@@ -12,7 +12,7 @@ import handler = require('./ClientCallHandler');
 export var DEBUG:boolean = false;
 
 export module api {
-	export interface IWSRpc2 {
+	export interface IWSRpcFrontend {
 		link(ws:WebSocket);
 		call(name:string, method:string, then?:(data?:JSON) => void, otherwise?:(data:JSON) => void): IWSRpc2Call;
 		singleton(instanceName:string, classNames:any);
@@ -25,7 +25,7 @@ export module api {
 	}
 }
 
-export class WSRpc2 implements api.IWSRpc2 {
+export class WSRpcFrontend implements api.IWSRpcFrontend {
 
 	private _ws:WebSocket;
 	private _handler:handler.ClientCallHandler;
@@ -39,7 +39,7 @@ export class WSRpc2 implements api.IWSRpc2 {
 		this._ws = ws;
 		if (this._ws) {
 			this._ws.onmessage = (event:any) => {
-				WSRpc2.log('WSRpc2', 'onmessage', this._ws.url, event.data);
+				WSRpcFrontend.log('WSRpcFrontend', 'onmessage', this._ws.url, event.data);
 				var rpc = JSON.parse(event.data);
 				var message:jrpc.RPC = new jrpc.RPC(rpc);
 				if (message.getId()) {
@@ -55,7 +55,7 @@ export class WSRpc2 implements api.IWSRpc2 {
 	}
 
 	public call(name:string, method:string, then?:(data?:JSON) => void, otherwise?:(data:JSON) => void):api.IWSRpc2Call {
-		var call:WSRpc2Call = new WSRpc2Call();
+		var call:WSRpcFrontendCall = new WSRpcFrontendCall();
 		call.ws = this._ws;
 		call.clazz = name;
 		call.method = method;
@@ -85,7 +85,7 @@ export class WSRpc2 implements api.IWSRpc2 {
 	}
 }
 
-class WSRpc2Call {
+class WSRpcFrontendCall {
 	ws:WebSocket = null;
 	id:string = null;
 	clazz:string = null;
@@ -94,7 +94,7 @@ class WSRpc2Call {
 	public fire(data?:JSON) {
 		var _rpc = jrpc.RPC.Request(this.id, this.clazz + '.' + this.method, data);
 		if (this.ws) {
-			WSRpc2.log('>> Send :', JSON.stringify(_rpc));
+			WSRpcFrontend.log('>> Send :', JSON.stringify(_rpc));
 			this.ws.send(JSON.stringify(_rpc));
 		} else {
 			throw 'ERR WRC_002: Can not send without WebSocket connection.';
