@@ -109,7 +109,7 @@ describe('WSRpcServerCallHandler sendResponseToOrigin tests', function () {
 
             mockClient.callCount = 0;
             var message = '{"jsonrpc":"2.0","result":100,"id":"INC_1"}';
-            var rpc = new jrpc.RpcMessage(JSON.parse(message));
+            var rpc = new jrpc.RPC(JSON.parse(message));
             _handler.sendResponseToOrigin(rpc.getId(), rpc.getResult());
 
             assert.equal(1, mockClient.callCount);
@@ -131,7 +131,7 @@ describe('WSRpcServerCallHandler sendErrorToOrigin tests', function () {
 
             mockClient.callCount = 0;
             var message = '{"jsonrpc":"2.0","error":{"code":-32601,"message":"RPC client instance named null not found."},"id":"INC_2"}';
-            var rpc = new jrpc.RpcMessage(JSON.parse(message));
+            var rpc = new jrpc.RPC(JSON.parse(message));
             _handler.sendErrorToOrigin(rpc.getId(), rpc.getCode(), rpc.getErrorMessage());
 
             assert.equal(1, mockClient.callCount);
