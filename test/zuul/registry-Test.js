@@ -3,8 +3,8 @@ console.log('RPC test');
 var assert = require('assert');
 var after = require('after');
 
-var reg = require('../dist/Registry');
-var sample = require('./extra/wsrpc_registry_classes').wsrpc_registry_classes;
+var reg = require('../../dist/Registry');
+var sample = require('./../extra/wsrpc_registry_classes').wsrpc_registry_classes;
 
 reg.DEBUG = true;
 

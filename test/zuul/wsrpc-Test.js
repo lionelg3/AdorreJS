@@ -3,7 +3,7 @@ console.log('WSRpc test');
 var assert = require('assert');
 var after = require('after');
 
-var wsrpc = require('../dist/WSRpc');
+var wsrpc = require('../../dist/WSRpc');
 wsrpc.DEBUG = true;
 
 suite('WSRpc');

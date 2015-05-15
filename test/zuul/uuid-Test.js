@@ -2,7 +2,7 @@ console.log('UUIDGenerator test');
 
 var assert = require('assert');
 
-var uuid = require('../dist/UUIDGenerator');
+var uuid = require('../../dist/UUIDGenerator');
 
 suite('UUIDGenerator');
 

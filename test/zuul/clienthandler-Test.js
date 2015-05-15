@@ -3,10 +3,10 @@ console.log('WSRpc test');
 var assert = require('assert');
 var after = require('after');
 
-var handler = require('../dist/ClientCallHandler');
-var jrpc = require('../dist/JsonRpc');
+var handler = require('../../dist/ClientCallHandler');
+var jrpc = require('../../dist/JsonRpc');
 
-var sample = require('./extra/wsrpc_registry_classes').wsrpc_registry_classes;
+var sample = require('./../extra/wsrpc_registry_classes').wsrpc_registry_classes;
 
 handler.DEBUG = true;
 

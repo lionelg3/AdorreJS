@@ -30,7 +30,7 @@ gulp.task('clean', function() {
 });
 
 gulp.task('test', ['clean', 'ts'], shell.task([
-    'zuul --local 8080 -- ./test/*-Test.js'
+    'zuul --local 8080 -- ./test/zuul/*-Test.js'
 ]));
 
 gulp.task('phantom', ['clean', 'ts'], shell.task([

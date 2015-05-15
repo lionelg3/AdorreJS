@@ -3,8 +3,8 @@ console.log('WSRpc client and backend test');
 var assert = require('assert');
 var after = require('after');
 
-var wsrpc = require('../dist/WSRpc');
-var sample = require('./extra/wsrpc_registry_classes').wsrpc_registry_classes;
+var wsrpc = require('../../dist/WSRpc');
+var sample = require('./../extra/wsrpc_registry_classes').wsrpc_registry_classes;
 
 wsrpc.DEBUG = true;
 var PORT = 3001;

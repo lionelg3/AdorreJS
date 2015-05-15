@@ -2,7 +2,7 @@ console.log('EventBus test');
 
 var assert = require('assert');
 
-var bus = require('../dist/EventBus');
+var bus = require('../../dist/EventBus');
 
 suite('EventBus');
 

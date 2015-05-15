@@ -2,7 +2,7 @@ console.log('RPC test');
 
 var assert = require('assert');
 
-var jrpc = require('../dist/JsonRpc');
+var jrpc = require('../../dist/JsonRpc');
 
 suite('RpcMessage');
 
