@@ -14,12 +14,12 @@ export var DEBUG:boolean = false;
 export module api {
 	export interface IWSRpcFrontend {
 		link(ws:WebSocket);
-		call(name:string, method:string, then?:(data?:JSON) => void, otherwise?:(data:JSON) => void): IWSRpc2Call;
+		call(name:string, method:string, then?:(data?:JSON) => void, otherwise?:(data:JSON) => void): IWSRpcCall;
 		singleton(instanceName:string, classNames:any);
 		stateless(instanceName:string, classNames:any);
 	}
 
-	export interface IWSRpc2Call {
+	export interface IWSRpcCall {
 		fire(data?:JSON);
 		broadcast(data?:JSON);
 	}
@@ -54,7 +54,7 @@ export class WSRpcFrontend implements api.IWSRpcFrontend {
 		}
 	}
 
-	public call(name:string, method:string, then?:(data?:JSON) => void, otherwise?:(data:JSON) => void):api.IWSRpc2Call {
+	public call(name:string, method:string, then?:(data?:JSON) => void, otherwise?:(data:JSON) => void):api.IWSRpcCall {
 		var call:WSRpcFrontendCall = new WSRpcFrontendCall();
 		call.ws = this._ws;
 		call.clazz = name;
@@ -85,7 +85,7 @@ export class WSRpcFrontend implements api.IWSRpcFrontend {
 	}
 }
 
-class WSRpcFrontendCall {
+class WSRpcFrontendCall implements api.IWSRpcCall {
 	ws:WebSocket = null;
 	id:string = null;
 	clazz:string = null;
