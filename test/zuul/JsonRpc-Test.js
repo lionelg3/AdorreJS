@@ -4,7 +4,7 @@ var assert = require('assert');
 
 var jrpc = require('../../dist/JsonRpc');
 
-suite('RpcMessage');
+suite('JsonRpc');
 
 test('Building empty JSon Rpc Request', function() {
 	var req1 = jrpc.RPC.Request('id1', 'action1', null);
