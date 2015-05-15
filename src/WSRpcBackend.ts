@@ -1,8 +1,12 @@
 /// <reference path="../typings/ws/ws.d.ts" />
+/// <reference path="Registry.ts" />
+/// <reference path="JsonRpc.ts" />
 /// <reference path="WSRpc.ts" />
-
-import ws = require('ws');
+import reg = require('./Registry');
+import jrpc = require('./JsonRpc');
+import bus = require('./EventBus');
 import rpc = require('./WSRpc');
+import ws = require('ws');
 
 export var DEBUG: boolean = false;
 
@@ -123,7 +127,7 @@ export class WSRpcBackend implements api.IWSRpcBackend {
     public _onClientMessage(client: WebSocket, data: any, flags: {binary: boolean}) {
         WSRpcLogging.log('>> ' + data);
         try {
-            var _rpc: rpc.RpcMessage = new rpc.RpcMessage(JSON.parse(data));
+            var _rpc: jrpc.RpcMessage = new jrpc.RpcMessage(JSON.parse(data));
             if (_rpc.isRequest() && _rpc.isBroadcast()) {
                 this._handler.broadcastRpcInvoke(
                     this._server,
@@ -164,18 +168,18 @@ export class WSRpcBackend implements api.IWSRpcBackend {
 
 export class WSRpcServerCallHandler {
 
-    private _singleton: rpc.ObjectRegistry;
-    private _stateless: rpc.ClassRegistry;
+    private _singleton: reg.ObjectRegistry;
+    private _stateless: reg.ClassRegistry;
     private _names: { [name: string]: Object };
-	private _eventBus: rpc.EventBus;
+	private _eventBus: bus.EventBus;
 	private _pendingRequest: { [id: string]: any };
 
 	constructor() {
         this._names = {};
-        this._singleton = new rpc.ObjectRegistry();
-        this._stateless = new rpc.ClassRegistry();
+        this._singleton = new reg.ObjectRegistry();
+        this._stateless = new reg.ClassRegistry();
 		this._pendingRequest = {};
-		this._eventBus = rpc.EventBus.getSharedEventBus();
+		this._eventBus = bus.EventBus.getSharedEventBus();
     }
 
     public singleton(instanceName: string, classNames: any) {
@@ -192,7 +196,7 @@ export class WSRpcServerCallHandler {
         console.warn('Session objects not implemented yet !');
     }
 
-    public getRegistry(instanceName: string): rpc.api.IRPCRegistry {
+    public getRegistry(instanceName: string): reg.api.IRPCRegistry {
         if (this._names[instanceName] === this._singleton) {
             return this._singleton;
         }
@@ -204,7 +208,7 @@ export class WSRpcServerCallHandler {
 
     public rpcInvoke(client: WebSocket, instance: string, method: string, params: JSON, id: string) {
         if (this._names[instance]) {
-            var registry: rpc.api.IRPCRegistry = null;
+            var registry: reg.api.IRPCRegistry = null;
             if (this._names[instance] === this._singleton) {
                 registry = this._singleton;
             }
@@ -213,19 +217,19 @@ export class WSRpcServerCallHandler {
             }
 			try {
 				var result: JSON = registry.invoke(instance, method, params);
-				client.send(JSON.stringify(rpc.RPC.Response(id, result)));
+				client.send(JSON.stringify(jrpc.RPC.Response(id, result)));
 			} catch (err) {
 				console.warn('RPC server call "' + instance + '.' + method + '" fail.');
-				WSRpcLogging.error('<< ' + JSON.stringify(rpc.RPC.Error('Error', rpc.RPC.INTERNAL_ERROR,
+				WSRpcLogging.error('<< ' + JSON.stringify(jrpc.RPC.Error('Error', jrpc.RPC.INTERNAL_ERROR,
 					'RPC server call "' + instance + '.' + method + '" fail.')));
-				client.send(JSON.stringify(rpc.RPC.Error('Error', rpc.RPC.INTERNAL_ERROR,
+				client.send(JSON.stringify(jrpc.RPC.Error('Error', jrpc.RPC.INTERNAL_ERROR,
 					'RPC server call "' + instance + '.' + method + '" fail.')));
 			}
         }
         else {
             client.send(
                 JSON.stringify(
-                    rpc.RPC.Error(id, rpc.RPC.METHOD_NOT_FOUND, 'RPC server instance named ' + instance + ' not found.')
+                    jrpc.RPC.Error(id, jrpc.RPC.METHOD_NOT_FOUND, 'RPC server instance named ' + instance + ' not found.')
                 )
             );
         }
@@ -236,7 +240,7 @@ export class WSRpcServerCallHandler {
 			this._pendingRequest[id] = client;
 		}
 		var m: string = (action) ? action : instance + '.' + method;
-		var newRpc = rpc.RPC.Request(id, m, params);
+		var newRpc = jrpc.RPC.Request(id, m, params);
 		server.clients.forEach((_client) => {
 			_client.send(JSON.stringify(newRpc));
 		});
@@ -244,7 +248,7 @@ export class WSRpcServerCallHandler {
 
     public sendResponseToOrigin(id: string, result: JSON) {
         if (id && this._pendingRequest[id]) {
-			var newRpc = rpc.RPC.Response(id, result);
+			var newRpc = jrpc.RPC.Response(id, result);
 			var client = this._pendingRequest[id];
 			client.send(JSON.stringify(newRpc));
 		}
@@ -252,7 +256,7 @@ export class WSRpcServerCallHandler {
 
     public sendErrorToOrigin(id: string, code: number, message: string) {
 		if (id && this._pendingRequest[id]) {
-			var newRpc = rpc.RPC.Error(id, code, message);
+			var newRpc = jrpc.RPC.Error(id, code, message);
 			var client = this._pendingRequest[id];
 			client.send(JSON.stringify(newRpc));
 		}
@@ -262,7 +266,7 @@ export class WSRpcServerCallHandler {
         this._eventBus.fire(id, result);
     }
 
-    public receiveClientError(rpc: rpc.RpcMessage) {
+    public receiveClientError(rpc: jrpc.RpcMessage) {
         WSRpcLogging.error('Get error : ' + JSON.stringify(rpc));
 	}
 

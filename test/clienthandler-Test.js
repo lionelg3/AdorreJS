@@ -3,12 +3,14 @@ console.log('WSRpc test');
 var assert = require('assert');
 var after = require('after');
 
-var wsrpc = require('../dist/WSRpc');
+var handler = require('../dist/ClientCallHandler');
+var jrpc = require('../dist/JsonRpc');
+
 var sample = require('./extra/wsrpc_registry_classes').wsrpc_registry_classes;
 
-wsrpc.DEBUG = true;
+handler.DEBUG = true;
 
-suite('WSRpcClientCallHandler');
+suite('ClientCallHandler');
 
 var mockClient = {
     jsonRpcMessage: null,
@@ -21,9 +23,9 @@ var mockClient = {
     }
 };
 
-test('WSRpcClientCallHandler call singleton', function() {
+test('ClientCallHandler call singleton', function() {
 
-    var _handler = new wsrpc.WSRpcClientCallHandler();
+    var _handler = new handler.ClientCallHandler();
 
     _handler.singleton('compteur', sample.Compteur);
     _handler.singleton('chatroom', sample.Chatroom);
@@ -44,7 +46,7 @@ test('WSRpcClientCallHandler call singleton', function() {
 
     assert.equal(3, v);
 
-    var rpc = new wsrpc.RpcMessage(
+    var rpc = new jrpc.RpcMessage(
         JSON.parse(
             '{' +
             '"jsonrpc":"2.0",' +
@@ -61,8 +63,8 @@ test('WSRpcClientCallHandler call singleton', function() {
     assert.equal(5, v);
 });
 
-test('WSRpcClientCallHandler call stateless', function() {
-    var _handler = new wsrpc.WSRpcClientCallHandler();
+test('ClientCallHandler call stateless', function() {
+    var _handler = new handler.ClientCallHandler();
 
     _handler.singleton('compteur', sample.Compteur);
     _handler.singleton('chatroom', sample.Chatroom);
@@ -75,7 +77,7 @@ test('WSRpcClientCallHandler call stateless', function() {
     _handler.rpcInvoke(mockClient, 'dateutil', 'getHour', null, 'HOUR');
     assert.equal(h1, mockClient.result());
 
-    var rpc = new wsrpc.RpcMessage(
+    var rpc = new jrpc.RpcMessage(
         JSON.parse(
             '{' +
                 '"jsonrpc":"2.0",' +
@@ -94,8 +96,8 @@ test('WSRpcClientCallHandler call stateless', function() {
 });
 
 
-test('WSRpcClientCallHandler call unknowned instance', function() {
-    var _handler = new wsrpc.WSRpcClientCallHandler();
+test('ClientCallHandler call unknowned instance', function() {
+    var _handler = new handler.ClientCallHandler();
 
     // Test stateless unknowned instance
     var registry = _handler.getRegistry('foo');
@@ -110,7 +112,7 @@ test('WSRpcClientCallHandler call unknowned instance', function() {
     }
     assert.equal(true, noCatch);
 
-    var rpc = new wsrpc.RpcMessage(
+    var rpc = new jrpc.RpcMessage(
         JSON.parse(
             '{' +
                 '"jsonrpc":"2.0",' +
@@ -130,7 +132,7 @@ test('WSRpcClientCallHandler call unknowned instance', function() {
     }
     assert.equal(true, noCatch);
 
-    rpc = new wsrpc.RpcMessage(
+    rpc = new jrpc.RpcMessage(
         JSON.parse(
             '{' +
                 '"jsonrpc":"2.0",' +

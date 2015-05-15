@@ -1,6 +1,8 @@
 var assert = require("assert");
 
 //var WebSocketServer = require('ws').Server;
+var bus = require('../../dist/EventBus');
+var jrpc = require('../../dist/JsonRpc');
 var wsrpc = require('../../dist/WSRpc');
 var wsrpcBackend = require('../../dist/WSRpcBackend');
 var sample = require('../extra/wsrpc_registry_classes').wsrpc_registry_classes;
@@ -12,7 +14,7 @@ var mockClient = {
     jsonRpcMessage: null,
     send: function(data) {
         this.callCount ++;
-        //console.log('MOCK SEND ' + '(' + this.callCount + '), data = ' + data);
+        console.log('MOCK SEND ' + '(' + this.callCount + '), data = ' + data);
         this.jsonRpcMessage = data;
     },
     result: function() {
@@ -107,7 +109,7 @@ describe('WSRpcServerCallHandler sendResponseToOrigin tests', function () {
 
             mockClient.callCount = 0;
             var message = '{"jsonrpc":"2.0","result":100,"id":"INC_1"}';
-            var rpc = new wsrpc.RpcMessage(JSON.parse(message));
+            var rpc = new jrpc.RpcMessage(JSON.parse(message));
             _handler.sendResponseToOrigin(rpc.getId(), rpc.getResult());
 
             assert.equal(1, mockClient.callCount);
@@ -129,7 +131,7 @@ describe('WSRpcServerCallHandler sendErrorToOrigin tests', function () {
 
             mockClient.callCount = 0;
             var message = '{"jsonrpc":"2.0","error":{"code":-32601,"message":"RPC client instance named null not found."},"id":"INC_2"}';
-            var rpc = new wsrpc.RpcMessage(JSON.parse(message));
+            var rpc = new jrpc.RpcMessage(JSON.parse(message));
             _handler.sendErrorToOrigin(rpc.getId(), rpc.getCode(), rpc.getErrorMessage());
 
             assert.equal(1, mockClient.callCount);
@@ -147,7 +149,7 @@ describe('WSRpcServerCallHandler useResponse tests', function () {
         it('call useResponse', function () {
             var done = false;
             var data = null;
-            var eventBus = wsrpc.EventBus.getSharedEventBus();
+            var eventBus = bus.EventBus.getSharedEventBus();
             eventBus.on('INC_3', function(x) {
                 done = true;
                 data = x;
