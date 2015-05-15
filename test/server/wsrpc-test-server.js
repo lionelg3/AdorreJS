@@ -88,6 +88,19 @@ server3000.on('connection', function connection(ws) {
                 ws.send(JSON.stringify(response));
             }
 
+            if ('remoteObject.callme' === request.method) {
+                console.log('TRACE', 'remoteObject.callme');
+                for(var x = 1 ; x<=5; x++) {
+                    var msg = JSON.stringify({
+                        'jsonrpc':'2.0',
+                        'method': 'compteur.increment',
+                        'id': 'x' + x
+                    });
+                    console.log('Send JSON-RPC call:\n  %s', msg);
+                    ws.send(msg);
+                }
+            }
+
         } catch (err) {
             console.log('Got non JSON-RPC request:\n  "%s"', data);
         }

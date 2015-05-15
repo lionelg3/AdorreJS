@@ -37,7 +37,7 @@ test('WSRpc2 link', function (done) {
     }
 
     try {
-        _wrc.createCall(
+        _wrc.call(
             'sample',
             'action').fire();
     } catch (err) {
@@ -64,7 +64,7 @@ test('WSRpc fire call', function (done) {
     done();
 
     setTimeout(function () {
-        _wrc.createCall(
+        _wrc.call(
             'remoteObject',
             'sayHello',
             function (json) {
@@ -89,7 +89,7 @@ test('WSRpc broadcast call', function (done) {
     done();
 
     setTimeout(function () {
-        _wrc.createCall(
+        _wrc.call(
             'remoteObject',
             'sayHello',
             function (json) {
@@ -115,7 +115,7 @@ test('WSRpc create failed call', function (done) {
     done();
 
     setTimeout(function () {
-        _wrc.createCall(
+        _wrc.call(
             'remoteObject',
             'sayHelloFailed',
             function (json) {
@@ -174,4 +174,36 @@ test('WSRpc simulate stateless handler', function () {
     var lastresponse = new jrpc.RPC(JSON.parse(__message));
     var result = lastresponse.getResult();
     assert.equal(undefined, result);
+});
+
+test('WSRpc use client handler', function (done) {
+    done = after(3, done);
+    var ws = new WebSocket('ws://localhost:' + WS_PORT);
+    var _wrc = new wrc.WSRpc2();
+    _wrc.link(ws);
+    _wrc.singleton('compteur', sample.Compteur);
+    done();
+
+    setTimeout(function () {
+        _wrc.call(
+            'remoteObject',
+            'callme'
+        ).fire()
+    }, 400);
+
+    setTimeout(function () {
+        var mockClient = {
+            send: function (data) {
+                done();
+                assert.equal(5, JSON.parse(data).result);
+            }
+        };
+        var _rpc = jrpc.RPC.Request('id_final', 'compteur.increment');
+        _wrc._handler.execute(mockClient, new jrpc.RPC(_rpc));
+    }, 1000);
+
+    setTimeout(function () {
+        ws.close();
+        done();
+    }, 1500);
 });

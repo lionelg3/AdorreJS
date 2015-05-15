@@ -14,7 +14,7 @@ export var DEBUG:boolean = false;
 export module api {
 	export interface IWSRpc2 {
 		link(ws:WebSocket);
-		createCall(name:string, method:string, then?:(data?:JSON) => void, otherwise?:(data:JSON) => void): IWSRpc2Call;
+		call(name:string, method:string, then?:(data?:JSON) => void, otherwise?:(data:JSON) => void): IWSRpc2Call;
 		singleton(instanceName:string, classNames:any);
 		stateless(instanceName:string, classNames:any);
 	}
@@ -54,7 +54,7 @@ export class WSRpc2 implements api.IWSRpc2 {
 		}
 	}
 
-	public createCall(name:string, method:string, then?:(data?:JSON) => void, otherwise?:(data:JSON) => void):api.IWSRpc2Call {
+	public call(name:string, method:string, then?:(data?:JSON) => void, otherwise?:(data:JSON) => void):api.IWSRpc2Call {
 		var call:WSRpc2Call = new WSRpc2Call();
 		call.ws = this._ws;
 		call.clazz = name;
