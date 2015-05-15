@@ -79,8 +79,8 @@ console.log('WebSocketServer listening on port 3000');
 
 // ===================== Backend Server ===================
 
-var sample = require('./extra/wsrpc_registry_classes').wsrpc_registry_classes;
-var backend = require('../dist/WSRpcBackend');
+var sample = require('./../extra/wsrpc_registry_classes').wsrpc_registry_classes;
+var backend = require('../../dist/WSRpcBackend');
 var _backend = new backend.WSRpcBackend();
 
 backend.DEBUG = true;

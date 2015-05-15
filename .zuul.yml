@@ -1,5 +1,5 @@
 name: WebSocket JSon RPC
-server: test/wsrpc-test-server.js
+server: test/server/wsrpc-test-server.js
 ui: mocha-qunit
 browsers:
     - name: chrome
