@@ -49,6 +49,34 @@ server3000.on('connection', function connection(ws) {
                 ws.send(JSON.stringify(response));
             }
 
+            if ('{broadcast}remoteObject.sayHello' === request.method) {
+                json = {'message': 'Hello ' + request.params.who + '!'};
+                response = {
+                    'jsonrpc':'2.0',
+                    'result': json,
+                    'id':request.id
+                };
+                console.log('Send JSON-RPC return:\n  %s', JSON.stringify(response));
+                ws.send(JSON.stringify(response));
+                ws.send(JSON.stringify(response));
+                ws.send(JSON.stringify(response));
+                ws.send(JSON.stringify(response));
+            }
+
+            if ('remoteObject.sayHelloFailed' === request.method) {
+                json = {
+                    'code': -32601,
+                    'message': 'METHOD_NOT_FOUND'
+                };
+                response = {
+                    'jsonrpc':'2.0',
+                    'error': json,
+                    'id': 'Error:'+request.id
+                };
+                console.log('Send JSON-RPC return:\n  %s', JSON.stringify(response));
+                ws.send(JSON.stringify(response));
+            }
+
             if ('remoteObject.sayHelloAll' === request.method) {
                 json = {'message': 'Hello all the ' + request.params.who + '!'};
                 response = {
