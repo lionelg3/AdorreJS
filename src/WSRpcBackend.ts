@@ -127,7 +127,7 @@ export class WSRpcBackend implements api.IWSRpcBackend {
     public _onClientMessage(client: WebSocket, data: any, flags: {binary: boolean}) {
         WSRpcLogging.log('>> ' + data);
         try {
-            var _rpc: jrpc.RpcMessage = new jrpc.RpcMessage(JSON.parse(data));
+            var _rpc: jrpc.RPC = new jrpc.RPC(JSON.parse(data));
             if (_rpc.isRequest() && _rpc.isBroadcast()) {
                 this._handler.broadcastRpcInvoke(
                     this._server,
@@ -266,7 +266,7 @@ export class WSRpcServerCallHandler {
         this._eventBus.fire(id, result);
     }
 
-    public receiveClientError(rpc: jrpc.RpcMessage) {
+    public receiveClientError(rpc: jrpc.RPC) {
         WSRpcLogging.error('Get error : ' + JSON.stringify(rpc));
 	}
 

@@ -156,7 +156,7 @@ export class WSRpc implements api.IWSRpc {
         this._ws.onmessage = (event: any) => {
             WSRpcLogging.log('WSRpc', 'onmessage', this._url, event.data);
             var rpc = JSON.parse(event.data);
-            var _rpcMessage: jrpc.RpcMessage = new jrpc.RpcMessage(rpc);
+            var _rpcMessage: jrpc.RPC = new jrpc.RPC(rpc);
             if (_rpcMessage.getId()) {
                 evt.EventBus.getSharedEventBus().fire(rpc.id, (rpc.result) ? rpc.result : rpc.error);
             }

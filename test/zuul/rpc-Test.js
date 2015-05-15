@@ -70,7 +70,7 @@ test('Parse JSon Rpc Request', function() {
     var req3 = JSON.parse('{"jsonrpc":"2.0","method":"remoteObject_sayHello","params":{"who":"world"},"id":"remoteObject.sayHello:9e9e3947-4d1b-448a-870d-a62e0846b863"}');
     var req4 = JSON.parse('{"jsonrpc":"2.0","method":"{broadcast}remoteObject_sayHelloAll","params":{"who":"all the world"},"id":"remoteObject.sayHelloAll:9e9e3947-4d1b-448a-870d-a62e0846b863"}');
 
-    var msg1 = new jrpc.RpcMessage(req1);
+    var msg1 = new jrpc.RPC(req1);
     assert.equal(msg1.getMethod(), 'sayHello');
     assert.equal(msg1.getInstance(), 'remoteObject');
     assert.equal(msg1.getParams().who, 'world');
@@ -80,7 +80,7 @@ test('Parse JSon Rpc Request', function() {
     assert.equal(msg1.isBroadcast(), false);
     assert.equal(msg1.isError(), false);
 
-    var msg2 = new jrpc.RpcMessage(req2);
+    var msg2 = new jrpc.RPC(req2);
     assert.equal(msg2.getMethod(), 'sayHelloAll');
     assert.equal(msg2.getInstance(), 'remoteObject');
     assert.equal(msg2.getParams().who, 'all the world');
@@ -90,7 +90,7 @@ test('Parse JSon Rpc Request', function() {
     assert.equal(msg2.isBroadcast(), true);
     assert.equal(msg2.isError(), false);
 
-    var msg3 = new jrpc.RpcMessage(req3);
+    var msg3 = new jrpc.RPC(req3);
     assert.equal(msg3.getAction(), 'remoteObject_sayHello');
     assert.equal(msg3.getParams().who, 'world');
     assert.equal(msg3.getId(), 'remoteObject.sayHello:9e9e3947-4d1b-448a-870d-a62e0846b863');
@@ -99,7 +99,7 @@ test('Parse JSon Rpc Request', function() {
     assert.equal(msg3.isBroadcast(), false);
     assert.equal(msg3.isError(), false);
 
-    var msg4 = new jrpc.RpcMessage(req4);
+    var msg4 = new jrpc.RPC(req4);
     assert.equal(msg4.getAction(), 'remoteObject_sayHelloAll');
     assert.equal(msg4.getParams().who, 'all the world');
     assert.equal(msg4.getId(), 'remoteObject.sayHelloAll:9e9e3947-4d1b-448a-870d-a62e0846b863');
@@ -112,7 +112,7 @@ test('Parse JSon Rpc Request', function() {
 test('Parse JSon Rpc Response', function() {
     var resp1 = JSON.parse('{"jsonrpc":"2.0","result":{"message":"Hello all the world!"},"id":"remoteObject.sayHelloAll:6be5407c-f33f-4935-83d0-901052a96883"}');
 
-    var msg1 = new jrpc.RpcMessage(resp1);
+    var msg1 = new jrpc.RPC(resp1);
     assert.equal(msg1.getResult().message, 'Hello all the world!');
     assert.equal(msg1.getId(), 'remoteObject.sayHelloAll:6be5407c-f33f-4935-83d0-901052a96883');
     assert.equal(msg1.isRequest(), false);
@@ -122,7 +122,7 @@ test('Parse JSon Rpc Response', function() {
 
     var resp2 = JSON.parse('{"jsonrpc":"2.0","result":null,"id":"INC"}');
 
-    var msg2 = new jrpc.RpcMessage(resp2);
+    var msg2 = new jrpc.RPC(resp2);
     assert.equal(msg2.getResult(), null);
     assert.equal(msg2.getId(), 'INC');
     assert.equal(msg2.isRequest(), false);
@@ -134,7 +134,7 @@ test('Parse JSon Rpc Response', function() {
 test('Parse JSon Rpc Error', function() {
     var error = JSON.parse('{"jsonrpc":"2.0","error":{"code":-32700,"message":"Message erreur"},"id":"remoteObject.sayHelloAll:6be5407c-f33f-4935-83d0-901052a96883"}');
 
-    var msg = new jrpc.RpcMessage(error);
+    var msg = new jrpc.RPC(error);
     assert.equal(msg.getCode(), -32700);
     assert.equal(msg.getErrorMessage(), 'Message erreur');
     assert.equal(msg.getId(), 'remoteObject.sayHelloAll:6be5407c-f33f-4935-83d0-901052a96883');

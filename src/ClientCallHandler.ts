@@ -10,7 +10,7 @@ export module api {
 		singleton(instanceName:string, classNames:any);
 		stateless(instanceName:string, classNames:any);
 		getRegistry(instanceName:string): reg.api.IRPCRegistry;
-		execute(client:WebSocket, rpc:jrpc.RpcMessage);
+		execute(client:WebSocket, rpc:jrpc.RPC);
 	}
 }
 
@@ -46,7 +46,7 @@ export class ClientCallHandler implements api.ICallHandler {
         return null;
     }
 
-    public execute(client:WebSocket, rpc:jrpc.RpcMessage) {
+    public execute(client:WebSocket, rpc:jrpc.RPC) {
         this.rpcInvoke(
             client,
             rpc.getInstance(),

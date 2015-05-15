@@ -1,4 +1,4 @@
-export class RpcMessage {
+export class RPC {
     _code: number;
     _message: string;
     _id: string;
@@ -94,42 +94,39 @@ export class RpcMessage {
     getId(): string {
         return this._id;
     }
-}
 
-export class RPC {
+	public static VERSION: string = '2.0';
+	public static PARSE_ERROR: number = -32700;
+	public static INVALID_REQUEST: number = -32600;
+	public static METHOD_NOT_FOUND: number = -32601;
+	public static INVALID_PARAMS: number = -32602;
+	public static INTERNAL_ERROR: number = -32603;
 
-    public static VERSION: string = '2.0';
-    public static PARSE_ERROR: number = -32700;
-    public static INVALID_REQUEST: number = -32600;
-    public static METHOD_NOT_FOUND: number = -32601;
-    public static INVALID_PARAMS: number = -32602;
-    public static INTERNAL_ERROR: number = -32603;
+	public static Response(id:string, result?:JSON) {
+		return {
+			'jsonrpc': RPC.VERSION,
+			'result': (result) ? result : null,
+			'id': (id) ? id : null
+		}
+	}
 
-    public static Response(id:string, result?:JSON) {
-        return {
-            'jsonrpc': RPC.VERSION,
-            'result': (result) ? result : null,
-            'id': (id) ? id : null
-        }
-    }
+	public static Request(id:string, method:string, data?:JSON) {
+		return {
+			'jsonrpc': RPC.VERSION,
+			'method': method,
+			'params': data,
+			'id': (id) ? id : null
+		};
+	}
 
-    public static Request(id:string, method:string, data?:JSON) {
-        return {
-            'jsonrpc': RPC.VERSION,
-            'method': method,
-            'params': data,
-            'id': (id) ? id : null
-        };
-    }
-
-    public static Error(id:string, code:number, message:string) {
-        return {
-            'jsonrpc': RPC.VERSION,
-            'error': {
-                'code': code,
-                'message' : message
-            },
-            'id': (id) ? id : null
-        };
-    }
+	public static Error(id:string, code:number, message:string) {
+		return {
+			'jsonrpc': RPC.VERSION,
+			'error': {
+				'code': code,
+				'message' : message
+			},
+			'id': (id) ? id : null
+		};
+	}
 }

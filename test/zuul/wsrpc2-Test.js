@@ -146,11 +146,11 @@ test('WSRpc simulate singleton handler', function () {
     };
 
     var _rpc = jrpc.RPC.Request('id1', 'compteur.increment');
-    _wrc._handler.execute(mockClient, new jrpc.RpcMessage(_rpc));
-    _wrc._handler.execute(mockClient, new jrpc.RpcMessage(_rpc));
-    _wrc._handler.execute(mockClient, new jrpc.RpcMessage(_rpc));
+    _wrc._handler.execute(mockClient, new jrpc.RPC(_rpc));
+    _wrc._handler.execute(mockClient, new jrpc.RPC(_rpc));
+    _wrc._handler.execute(mockClient, new jrpc.RPC(_rpc));
 
-    var lastresponse = new jrpc.RpcMessage(JSON.parse(__message));
+    var lastresponse = new jrpc.RPC(JSON.parse(__message));
     var result = lastresponse.getResult();
     assert.equal(2, result);
 });
@@ -167,11 +167,11 @@ test('WSRpc simulate stateless handler', function () {
     };
 
     var _rpc = jrpc.RPC.Request('id1', 'compteur.increment');
-    _wrc._handler.execute(mockClient, new jrpc.RpcMessage(_rpc));
-    _wrc._handler.execute(mockClient, new jrpc.RpcMessage(_rpc));
-    _wrc._handler.execute(mockClient, new jrpc.RpcMessage(_rpc));
+    _wrc._handler.execute(mockClient, new jrpc.RPC(_rpc));
+    _wrc._handler.execute(mockClient, new jrpc.RPC(_rpc));
+    _wrc._handler.execute(mockClient, new jrpc.RPC(_rpc));
 
-    var lastresponse = new jrpc.RpcMessage(JSON.parse(__message));
+    var lastresponse = new jrpc.RPC(JSON.parse(__message));
     var result = lastresponse.getResult();
     assert.equal(undefined, result);
 });

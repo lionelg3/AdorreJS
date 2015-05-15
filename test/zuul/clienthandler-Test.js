@@ -46,7 +46,7 @@ test('ClientCallHandler call singleton', function() {
 
     assert.equal(3, v);
 
-    var rpc = new jrpc.RpcMessage(
+    var rpc = new jrpc.RPC(
         JSON.parse(
             '{' +
             '"jsonrpc":"2.0",' +
@@ -77,7 +77,7 @@ test('ClientCallHandler call stateless', function() {
     _handler.rpcInvoke(mockClient, 'dateutil', 'getHour', null, 'HOUR');
     assert.equal(h1, mockClient.result());
 
-    var rpc = new jrpc.RpcMessage(
+    var rpc = new jrpc.RPC(
         JSON.parse(
             '{' +
                 '"jsonrpc":"2.0",' +
@@ -112,7 +112,7 @@ test('ClientCallHandler call unknowned instance', function() {
     }
     assert.equal(true, noCatch);
 
-    var rpc = new jrpc.RpcMessage(
+    var rpc = new jrpc.RPC(
         JSON.parse(
             '{' +
                 '"jsonrpc":"2.0",' +
@@ -132,7 +132,7 @@ test('ClientCallHandler call unknowned instance', function() {
     }
     assert.equal(true, noCatch);
 
-    rpc = new jrpc.RpcMessage(
+    rpc = new jrpc.RPC(
         JSON.parse(
             '{' +
                 '"jsonrpc":"2.0",' +
