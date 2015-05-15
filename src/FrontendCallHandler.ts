@@ -6,7 +6,7 @@ import jrpc = require('./JsonRpc');
 export var DEBUG:boolean = false;
 
 export module api {
-	export interface ICallHandler {
+	export interface IFrontendCallHandler {
 		singleton(instanceName:string, classNames:any);
 		stateless(instanceName:string, classNames:any);
 		getRegistry(instanceName:string): reg.api.IRPCRegistry;
@@ -14,7 +14,7 @@ export module api {
 	}
 }
 
-export class ClientCallHandler implements api.ICallHandler {
+export class FrontendCallHandler implements api.IFrontendCallHandler {
 
     private _singleton:reg.ObjectRegistry;
     private _stateless:reg.ClassRegistry;
@@ -60,16 +60,16 @@ export class ClientCallHandler implements api.ICallHandler {
         if (this._names[instance]) {
             var registry:reg.api.IRPCRegistry = null;
             if (this._names[instance] === this._singleton) {
-                ClientCallHandler.log(':registry:_singleton');
+                FrontendCallHandler.log(':registry:_singleton');
                 registry = this._singleton;
             }
             else if (this._names[instance] === this._stateless) {
-                ClientCallHandler.log(':registry:_stateless');
+                FrontendCallHandler.log(':registry:_stateless');
                 registry = this._stateless;
             }
-            ClientCallHandler.log(':invoke:' + instance + '.' + method + '(' + params + ') : ' + id);
+            FrontendCallHandler.log(':invoke:' + instance + '.' + method + '(' + params + ') : ' + id);
             var result:JSON = registry.invoke(instance, method, params);
-            ClientCallHandler.log(':response:' + JSON.stringify(jrpc.RPC.Response(id, result)));
+            FrontendCallHandler.log(':response:' + JSON.stringify(jrpc.RPC.Response(id, result)));
             client.send(JSON.stringify(jrpc.RPC.Response(id, result)));
         }
         else {

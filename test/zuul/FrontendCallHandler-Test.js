@@ -3,14 +3,14 @@ console.log('WSRpc test');
 var assert = require('assert');
 var after = require('after');
 
-var handler = require('../../dist/ClientCallHandler');
+var handler = require('../../dist/FrontendCallHandler');
 var jrpc = require('../../dist/JsonRpc');
 
 var sample = require('./../extra/wsrpc_registry_classes').wsrpc_registry_classes;
 
 handler.DEBUG = true;
 
-suite('ClientCallHandler');
+suite('FrontendCallHandler');
 
 var mockClient = {
     jsonRpcMessage: null,
@@ -23,9 +23,9 @@ var mockClient = {
     }
 };
 
-test('ClientCallHandler call singleton', function() {
+test('FrontendCallHandler call singleton', function() {
 
-    var _handler = new handler.ClientCallHandler();
+    var _handler = new handler.FrontendCallHandler();
 
     _handler.singleton('compteur', sample.Compteur);
     _handler.singleton('chatroom', sample.Chatroom);
@@ -63,8 +63,8 @@ test('ClientCallHandler call singleton', function() {
     assert.equal(5, v);
 });
 
-test('ClientCallHandler call stateless', function() {
-    var _handler = new handler.ClientCallHandler();
+test('FrontendCallHandler call stateless', function() {
+    var _handler = new handler.FrontendCallHandler();
 
     _handler.singleton('compteur', sample.Compteur);
     _handler.singleton('chatroom', sample.Chatroom);
@@ -96,8 +96,8 @@ test('ClientCallHandler call stateless', function() {
 });
 
 
-test('ClientCallHandler call unknowned instance', function() {
-    var _handler = new handler.ClientCallHandler();
+test('FrontendCallHandler call unknowned instance', function() {
+    var _handler = new handler.FrontendCallHandler();
 
     // Test stateless unknowned instance
     var registry = _handler.getRegistry('foo');

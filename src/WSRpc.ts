@@ -2,12 +2,12 @@
 /// <reference path="Registry.ts" />
 /// <reference path="JsonRpc.ts" />
 /// <reference path="EventBus.ts" />
-/// <reference path="ClientCallHandler.ts" />
+/// <reference path="FrontendCallHandler.ts" />
 import uuid = require('./UUIDGenerator');
 import reg = require('./Registry');
 import jrpc = require('./JsonRpc');
 import evt = require('./EventBus');
-import handler = require('./ClientCallHandler');
+import handler = require('./FrontendCallHandler');
 
 
 export var DEBUG: boolean = false;
@@ -118,7 +118,7 @@ export class WSRpc implements api.IWSRpc {
 
     private _ws: WebSocket;
     private _url: string;
-    private _handler: handler.ClientCallHandler;
+    private _handler: handler.api.IFrontendCallHandler;
 
     private _onOpenCallback: (event: Event) => void;
     private _onCloseCallback: (event: CloseEvent) => void;
@@ -128,7 +128,7 @@ export class WSRpc implements api.IWSRpc {
     constructor(url: string) {
         this._url = url;
         this._ws = null;
-        this._handler = new handler.ClientCallHandler();
+        this._handler = new handler.FrontendCallHandler();
     }
 
     public connect() {
