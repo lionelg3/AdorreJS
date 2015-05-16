@@ -34,15 +34,15 @@ var wsrpc_registry_classes;
         }
         DateUtil.prototype.getHour = function () {
             console.log('DateUtil getHour()');
-            return new Date().getHours();
+            return 23;
         };
         DateUtil.prototype.getMinutes = function () {
             console.log('DateUtil getMinutes()');
-            return new Date().getMinutes();
+            return 59;
         };
         DateUtil.prototype.getSecondes = function () {
             console.log('DateUtil getSecondes()');
-            return new Date().getSeconds();
+            return 59;
         };
         return DateUtil;
     })();
