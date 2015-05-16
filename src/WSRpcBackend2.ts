@@ -126,7 +126,7 @@ export class WSRpcBackend implements api.IWSRpcBackend {
     
     public static log(...args:any[]) {
         if (DEBUG) {
-            console.debug.apply(WSRpcBackend, args);
+            console.log(args);
         }
     }
 }

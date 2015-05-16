@@ -135,7 +135,7 @@ export class BackendCallHandler implements api.IBackendCallHandler {
 
     public static log(...args:any[]) {
         if (DEBUG) {
-            console.debug.apply(console, args);
+            console.log(args);
         }
     }
 }
