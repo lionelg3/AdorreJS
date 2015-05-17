@@ -33,18 +33,18 @@ test('FrontendCallHandler call singleton', function() {
 
     // Test singleton compteur
     _handler.rpcInvoke(mockClient, 'compteur', 'increment', null, 'INC');
-    assert.equal(null, mockClient.result());
-
-    _handler.rpcInvoke(mockClient, 'compteur', 'increment', null, 'INC');
     assert.equal(1, mockClient.result());
 
     _handler.rpcInvoke(mockClient, 'compteur', 'increment', null, 'INC');
     assert.equal(2, mockClient.result());
 
+    _handler.rpcInvoke(mockClient, 'compteur', 'increment', null, 'INC');
+    assert.equal(3, mockClient.result());
+
     var registry = _handler.getRegistry('compteur');
     var v = registry.invoke('compteur', 'increment', null);
 
-    assert.equal(3, v);
+    assert.equal(4, v);
 
     var rpc = new jrpc.RPC(
         JSON.parse(
@@ -60,7 +60,7 @@ test('FrontendCallHandler call singleton', function() {
 
     v = registry.invoke('compteur', 'increment', null);
 
-    assert.equal(5, v);
+    assert.equal(6, v);
 });
 
 test('FrontendCallHandler call stateless', function() {

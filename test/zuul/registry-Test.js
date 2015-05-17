@@ -16,11 +16,11 @@ test('Building and working with object registry', function() {
     registry.register('chatroom', sample.Chatroom);
 
     var r = registry.invoke('compteur', 'increment');
-    assert.equal(r, 0);
-    r = registry.invoke('compteur', 'increment');
     assert.equal(r, 1);
     r = registry.invoke('compteur', 'increment');
     assert.equal(r, 2);
+    r = registry.invoke('compteur', 'increment');
+    assert.equal(r, 3);
 
     registry.invoke('chatroom', 'say', 'COUCOU2');
     registry.invoke('chatroom', 'say', 'COUCOU aussi');
@@ -42,11 +42,11 @@ test('Building and working with class registry', function() {
     registry.register('chatroom', sample.Chatroom);
 
     var r = registry.invoke('compteur', 'increment');
-    assert.equal(r, 0);
+    assert.equal(r, 1);
     r = registry.invoke('compteur', 'increment');
-    assert.equal(r, 0);
+    assert.equal(r, 1);
     r = registry.invoke('compteur', 'increment');
-    assert.equal(r, 0);
+    assert.equal(r, 1);
 
     registry.invoke('chatroom', 'say', 'COUCOU2');
     registry.invoke('chatroom', 'say', 'COUCOU aussi');
@@ -71,18 +71,18 @@ test('Building and working with key registry', function() {
     var r2 = new reg.KeyRegistry('my', classRegistry);
 
     var r = r1.invoke('compteur', 'increment');
-    assert.equal(r, 0);
-    r = r1.invoke('compteur', 'increment');
     assert.equal(r, 1);
     r = r1.invoke('compteur', 'increment');
     assert.equal(r, 2);
+    r = r1.invoke('compteur', 'increment');
+    assert.equal(r, 3);
 
     r = r2.invoke('compteur', 'increment');
-    assert.equal(r, 0);
-    r = r2.invoke('compteur', 'increment');
     assert.equal(r, 1);
     r = r2.invoke('compteur', 'increment');
     assert.equal(r, 2);
+    r = r2.invoke('compteur', 'increment');
+    assert.equal(r, 3);
 
 
     r1.invoke('chatroom', 'say', 'COUCOU2');

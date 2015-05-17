@@ -152,7 +152,7 @@ test('WSRpc simulate singleton handler', function () {
 
     var lastresponse = new jrpc.RPC(JSON.parse(__message));
     var result = lastresponse.getResult();
-    assert.equal(2, result);
+    assert.equal(3, result);
 });
 
 test('WSRpc simulate stateless handler', function () {
@@ -173,7 +173,7 @@ test('WSRpc simulate stateless handler', function () {
 
     var lastresponse = new jrpc.RPC(JSON.parse(__message));
     var result = lastresponse.getResult();
-    assert.equal(undefined, result);
+    assert.equal(1, result);
 });
 
 test('WSRpc use client handler', function (done) {

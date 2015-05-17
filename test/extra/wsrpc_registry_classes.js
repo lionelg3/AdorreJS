@@ -23,7 +23,8 @@ var wsrpc_registry_classes;
             this.index = 0;
         }
         Compteur.prototype.increment = function () {
-            return this.index++;
+            this.index++;
+            return this.index;
         };
         return Compteur;
     })();
