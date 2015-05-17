@@ -40,19 +40,19 @@ describe('BackendCallHandler execute tests', function () {
             var registry = _handler.getRegistry('compteur');
 
             _handler.execute(mockClient, 'compteur', 'increment', null, 'INC');
-            assert.equal(null, mockClient.result());
-
-            _handler.execute(mockClient, 'compteur', 'increment', null, 'INC');
             assert.equal(1, mockClient.result());
 
             _handler.execute(mockClient, 'compteur', 'increment', null, 'INC');
             assert.equal(2, mockClient.result());
 
+            _handler.execute(mockClient, 'compteur', 'increment', null, 'INC');
+            assert.equal(3, mockClient.result());
+
             var v = registry.invoke('compteur', 'increment', null);
-            assert.equal(3, v);
+            assert.equal(4, v);
 
             v = registry.invoke('compteur', 'increment', null);
-            assert.equal(4, v);
+            assert.equal(5, v);
         })
     });
 

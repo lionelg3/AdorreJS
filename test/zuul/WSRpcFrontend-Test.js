@@ -195,7 +195,7 @@ test('WSRpc use client handler', function (done) {
         var mockClient = {
             send: function (data) {
                 done();
-                assert.equal(5, JSON.parse(data).result);
+                assert.equal(6, JSON.parse(data).result);
             }
         };
         var _rpc = jrpc.RPC.Request('id_final', 'compteur.increment');
