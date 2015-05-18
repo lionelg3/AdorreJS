@@ -39,14 +39,14 @@ export class WSRpcFrontend implements api.IWSRpcFrontend {
 		this._ws = ws;
 		if (this._ws) {
 			this._ws.onmessage = (event:any) => {
-				WSRpcFrontend.log('WSRpcFrontend', 'onmessage', this._ws.url, event.data);
+				WSRpcFrontend.log('WSRpcFrontend onmessage ' + event.data);
 				var rpc = JSON.parse(event.data);
 				var message:jrpc.RPC = new jrpc.RPC(rpc);
-				if (message.getId()) {
-					evt.EventBus.getSharedEventBus().fire(rpc.id, (rpc.result) ? rpc.result : rpc.error);
-				}
 				if (message.isRequest()) {
 					this._handler.execute(this._ws, message.getInstance(), message.getMethod(), message.getParams(), message.getId());
+				}
+				else {
+					evt.EventBus.getSharedEventBus().fire(rpc.id, (rpc.result) ? rpc.result : rpc.error);
 				}
 			};
 		} else {
@@ -81,7 +81,7 @@ export class WSRpcFrontend implements api.IWSRpcFrontend {
 
 	public static log(...args:any[]) {
 		if (DEBUG)
-			console.debug.apply(console, args);
+			console.log(args);
 	}
 }
 
@@ -94,7 +94,7 @@ class WSRpcFrontendCall implements api.IWSRpcCall {
 	public fire(data?:JSON) {
 		var _rpc = jrpc.RPC.Request(this.id, this.clazz + '.' + this.method, data);
 		if (this.ws) {
-			WSRpcFrontend.log('>> Send :', JSON.stringify(_rpc));
+			WSRpcFrontend.log('>>WSRpcFrontend ' + JSON.stringify(_rpc));
 			this.ws.send(JSON.stringify(_rpc));
 		} else {
 			throw 'ERR WSRpcFrontend WRC_002: Can not send without WebSocket connection.';
