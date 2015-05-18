@@ -56,15 +56,21 @@ export class FrontendCallHandler implements api.IFrontendCallHandler {
             else if (this._names[instance] === this._stateless) {
                 registry = this._stateless;
             }
-            FrontendCallHandler.log(':invoke:' + instance + '.' + method + '(' + params + ') : ' + id);
-            var result:JSON = registry.invoke(instance, method, params);
-            FrontendCallHandler.log(':response:' + JSON.stringify(jrpc.RPC.Response(id, result)));
-            client.send(JSON.stringify(jrpc.RPC.Response(id, result)));
+            try {
+                var result:JSON = registry.invoke(instance, method, params);
+                client.send(JSON.stringify(jrpc.RPC.Response(id, result)));
+            } catch (err) {
+                console.warn('RPC frontend call "' + instance + '.' + method + '" fail.');
+                FrontendCallHandler.log('>>FrontendCallHandler ' + JSON.stringify(jrpc.RPC.Error('Error', jrpc.RPC.INTERNAL_ERROR,
+                        'RPC frontend call "' + instance + '.' + method + '" fail.')));
+                client.send(JSON.stringify(jrpc.RPC.Error('Error:' + id, jrpc.RPC.INTERNAL_ERROR,
+                    'RPC frontend call "' + instance + '.' + method + '" fail.')));
+            }
         }
         else {
             client.send(
                 JSON.stringify(
-                    jrpc.RPC.Error(id, jrpc.RPC.METHOD_NOT_FOUND, 'RPC client instance named ' + instance + ' not' +
+                    jrpc.RPC.Error('Error:' + id, jrpc.RPC.METHOD_NOT_FOUND, 'RPC frontend instance named ' + instance + ' not' +
                         ' found.')
                 )
             );

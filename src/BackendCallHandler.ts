@@ -65,9 +65,9 @@ export class BackendCallHandler implements api.IBackendCallHandler {
         return null;
     }
 
-    public execute(client: WebSocket, instance: string, method: string, params: JSON, id: string) {
+    public execute(client:WebSocket, instance:string, method:string, params:JSON, id:string) {
         if (this._names[instance]) {
-            var registry: reg.api.IRPCRegistry = null;
+            var registry:reg.api.IRPCRegistry = null;
             if (this._names[instance] === this._singleton) {
                 registry = this._singleton;
             }
@@ -75,29 +75,27 @@ export class BackendCallHandler implements api.IBackendCallHandler {
                 registry = this._stateless;
             }
             try {
-                var result: JSON = registry.invoke(instance, method, params);
+                var result:JSON = registry.invoke(instance, method, params);
                 client.send(JSON.stringify(jrpc.RPC.Response(id, result)));
             } catch (err) {
-                console.warn('RPC server call "' + instance + '.' + method + '" fail.');
-                BackendCallHandler.log('<< ' + JSON.stringify(jrpc.RPC.Error('Error', jrpc.RPC.INTERNAL_ERROR,
-                        'RPC server call "' + instance + '.' + method + '" fail.')));
-                client.send(JSON.stringify(jrpc.RPC.Error('Error', jrpc.RPC.INTERNAL_ERROR,
-                    'RPC server call "' + instance + '.' + method + '" fail.')));
+                console.warn('RPC backend call "' + instance + '.' + method + '" fail.');
+                BackendCallHandler.log('<<BackendCallHandler ' + JSON.stringify(jrpc.RPC.Error('Error', jrpc.RPC.INTERNAL_ERROR,
+                        'RPC backend call "' + instance + '.' + method + '" fail.')));
+                client.send(JSON.stringify(jrpc.RPC.Error('Error:' + id, jrpc.RPC.INTERNAL_ERROR,
+                    'RPC backend call "' + instance + '.' + method + '" fail.')));
             }
         }
         else {
             client.send(
                 JSON.stringify(
-                    jrpc.RPC.Error(id, jrpc.RPC.METHOD_NOT_FOUND, 'RPC server instance named ' + instance + ' not found.')
+                    jrpc.RPC.Error('Error:' + id, jrpc.RPC.METHOD_NOT_FOUND, 'RPC backend instance named ' + instance + ' not found.')
                 )
             );
         }
     }
 
     public broadcastExecute(server: ws.Server, client: WebSocket, instance: string, method: string, params: JSON, id: string) {
-        if (id) {
-            this._pendingRequest[id] = client;
-        }
+        this._pendingRequest[id] = client;
         var m: string = instance + '.' + method;
         var newRpc = jrpc.RPC.Request(id, m, params);
         server.clients.forEach((_client) => {
