@@ -5,7 +5,6 @@ export class RPC {
     _broadcast: boolean;
     _namedMethod: string;
     _namedInstance: string;
-    _namedAction: string;
     _result: JSON;
     _params: JSON;
 
@@ -23,7 +22,6 @@ export class RPC {
             this._params = rpc.params;
             var t = rpc.method.split('.');
             if (t.length == 2) {
-                this._namedAction = null;
                 this._namedMethod = t[t.length - 1];
                 if (t[0].split('}')[0] === '{broadcast') {
                     this._broadcast = true;
@@ -32,14 +30,7 @@ export class RPC {
                     this._namedInstance = t[0];
                 }
             } else {
-                this._namedInstance = null;
-                this._namedMethod = null;
-                if (t[0].split('}')[0] === '{broadcast') {
-                    this._broadcast = true;
-                    this._namedAction = t[0].split('}')[1];
-                } else {
-                    this._namedAction = t[0];
-                }
+                throw 'RPC Parse error';
             }
         }
         else {
@@ -52,7 +43,7 @@ export class RPC {
     }
 
     isRequest(): boolean {
-        return (this._namedMethod !== undefined || this._namedAction !== undefined);
+        return (this._namedMethod !== undefined);
     }
 
     isResponse(): boolean {
@@ -85,10 +76,6 @@ export class RPC {
 
     getInstance(): string {
         return this._namedInstance;
-    }
-
-    getAction(): string {
-        return this._namedAction;
     }
 
     getId(): string {
