@@ -46,11 +46,11 @@ export class WSRpcFrontend implements api.IWSRpcFrontend {
 					evt.EventBus.getSharedEventBus().fire(rpc.id, (rpc.result) ? rpc.result : rpc.error);
 				}
 				if (message.isRequest()) {
-					this._handler.execute(this._ws, message);
+					this._handler.execute(this._ws, message.getInstance(), message.getMethod(), message.getParams(), message.getId());
 				}
 			};
 		} else {
-			throw 'ERR WRC_001: Can not link without WebSocket connection.';
+			throw 'ERR WSRpcFrontend WRC_001: Can not link without WebSocket connection.';
 		}
 	}
 
@@ -97,7 +97,7 @@ class WSRpcFrontendCall implements api.IWSRpcCall {
 			WSRpcFrontend.log('>> Send :', JSON.stringify(_rpc));
 			this.ws.send(JSON.stringify(_rpc));
 		} else {
-			throw 'ERR WRC_002: Can not send without WebSocket connection.';
+			throw 'ERR WSRpcFrontend WRC_002: Can not send without WebSocket connection.';
 		}
 	}
 

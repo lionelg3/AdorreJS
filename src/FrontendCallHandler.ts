@@ -10,7 +10,8 @@ export module api {
 		singleton(instanceName:string, classNames:any);
 		stateless(instanceName:string, classNames:any);
 		getRegistry(instanceName:string): reg.api.IRPCRegistry;
-		execute(client:WebSocket, rpc:jrpc.RPC);
+
+		execute(client:WebSocket, instance:string, method:string, params:JSON, id:string);
 	}
 }
 
@@ -46,25 +47,13 @@ export class FrontendCallHandler implements api.IFrontendCallHandler {
         return null;
     }
 
-    public execute(client:WebSocket, rpc:jrpc.RPC) {
-        this.rpcInvoke(
-            client,
-            rpc.getInstance(),
-            rpc.getMethod(),
-            rpc.getParams(),
-            rpc.getId()
-        );
-    }
-
-    public rpcInvoke(client:WebSocket, instance:string, method:string, params:JSON, id:string) {
+    public execute(client:WebSocket, instance:string, method:string, params:JSON, id:string) {
         if (this._names[instance]) {
             var registry:reg.api.IRPCRegistry = null;
             if (this._names[instance] === this._singleton) {
-                FrontendCallHandler.log(':registry:_singleton');
                 registry = this._singleton;
             }
             else if (this._names[instance] === this._stateless) {
-                FrontendCallHandler.log(':registry:_stateless');
                 registry = this._stateless;
             }
             FrontendCallHandler.log(':invoke:' + instance + '.' + method + '(' + params + ') : ' + id);

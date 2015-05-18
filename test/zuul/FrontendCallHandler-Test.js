@@ -32,13 +32,13 @@ test('FrontendCallHandler call singleton', function() {
     _handler.stateless('dateutil', sample.DateUtil);
 
     // Test singleton compteur
-    _handler.rpcInvoke(mockClient, 'compteur', 'increment', null, 'INC');
+    _handler.execute(mockClient, 'compteur', 'increment', null, 'INC');
     assert.equal(1, mockClient.result());
 
-    _handler.rpcInvoke(mockClient, 'compteur', 'increment', null, 'INC');
+    _handler.execute(mockClient, 'compteur', 'increment', null, 'INC');
     assert.equal(2, mockClient.result());
 
-    _handler.rpcInvoke(mockClient, 'compteur', 'increment', null, 'INC');
+    _handler.execute(mockClient, 'compteur', 'increment', null, 'INC');
     assert.equal(3, mockClient.result());
 
     var registry = _handler.getRegistry('compteur');
@@ -56,7 +56,7 @@ test('FrontendCallHandler call singleton', function() {
             '}'
         )
     );
-    _handler.execute(mockClient, rpc);
+    _handler.execute(mockClient, rpc.getInstance(), rpc.getMethod(), rpc.getParams(), rpc.getId());
 
     v = registry.invoke('compteur', 'increment', null);
 
@@ -74,7 +74,7 @@ test('FrontendCallHandler call stateless', function() {
     var registry = _handler.getRegistry('dateutil');
     var h1 = registry.invoke('dateutil', 'getHour', null);
 
-    _handler.rpcInvoke(mockClient, 'dateutil', 'getHour', null, 'HOUR');
+    _handler.execute(mockClient, 'dateutil', 'getHour', null, 'HOUR');
     assert.equal(h1, mockClient.result());
 
     var rpc = new jrpc.RPC(
@@ -88,7 +88,7 @@ test('FrontendCallHandler call stateless', function() {
         )
     );
 
-    _handler.execute(mockClient, rpc);
+    _handler.execute(mockClient, rpc.getInstance(), rpc.getMethod(), rpc.getParams(), rpc.getId());
     assert.equal(h1, mockClient.result());
 
     var h2 = registry.invoke('dateutil', 'getHour', null);
@@ -105,7 +105,7 @@ test('FrontendCallHandler call unknowned instance', function() {
 
     var noCatch = null;
     try {
-        _handler.rpcInvoke(mockClient, 'foo', 'bar', null, 'FOO');
+        _handler.execute(mockClient, 'foo', 'bar', null, 'FOO');
         noCatch = true;
     } catch (err) {
         noCatch = false;
@@ -125,7 +125,7 @@ test('FrontendCallHandler call unknowned instance', function() {
 
     noCatch = null;
     try {
-        _handler.execute(mockClient, rpc);
+        _handler.execute(mockClient, rpc.getInstance(), rpc.getMethod(), rpc.getParams(), rpc.getId());
         noCatch = true;
     } catch (err) {
         noCatch = false;
@@ -145,7 +145,7 @@ test('FrontendCallHandler call unknowned instance', function() {
 
     noCatch = null;
     try {
-        _handler.execute(mockClient, rpc);
+        _handler.execute(mockClient, rpc.getInstance(), rpc.getMethod(), rpc.getParams(), rpc.getId());
         noCatch = true;
     } catch (err) {
         noCatch = false;
