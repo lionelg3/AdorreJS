@@ -1,55 +1,51 @@
 # WSRpc
 
-## About
-
-Few information about [JSON-RPC](http://www.jsonrpc.org/)    
-
-## Fluid API :
-
-Usage :
-
-    var _wsrpc = new lg3x.WSRpc('ws://myhost:5555');
-
-Simple method call with params. The result is in the "then" callcack.
-
-    _wsrpc.call()
-            .method('remoteObject.sayHello')
-            .withParams(JSON.parse('{"who": "world"}'))
-            .then(function (json) {
-                    console.log('go ' + json);
-                }
-            );
-
-Simple "named" method call with params. The result is in the "on" callcack.
-Very usefull with many answers.
-
-    _wsrpc.on('HELLO WORLD',
-        function (json) {
-            console.log('go ' + json);
-        }
-    );
-    _wsrpc.call('HELLO WORLD')
-            .method('remoteObject.sayHello')
-            .withParams(JSON.parse('{"who": "world"}'))
-            .now();
-            
-## Request / response API :
-
-Usage :
-
-    var _wsrpc = new lg3x.WSRpc('ws://myhost:5555');
+## How to use
+   
+### Node.JS (Backend part)   
+   
+The following example links WSRpcBackend to a WebSocketServer. 
+   
+    var WebSocketServer = require('ws').Server,
+        wsserver = new WebSocketServer({ port: 3000 }),
+    var backend = new backend.WSRpcBackend()
+    backend.singleton('myObject1', mypackage.MyObject1);
+    backend.link(wsserver);
     
-Simple named call. The result is in the callcack.
+All methods off class "mypackage.MyObject" can now be call from the WSRpcFrontEnd.    
+  
+### Browser (Frontend part)
 
-    _wsrpc.doRequest('CALL_ME_1', {'name': 'john'}),
-        function (json) {
-            console.log('Server say ' + json.message);
-        }
-    );    
+The frontend part is like the backend part.   
+   
+    var frontend = require('WSRpcFrontend');
+    var wsclient = new WebSocket('ws://localhost:' + WS_PORT);
+    var frontend = new frontend.WSRpcFrontend();
+    frontend.stateless('myObject2', mypackage.MyObject2);
+    frontend.link(wsclient);
 
-With named response.
+Methods of the backend can now be call like this :
 
-    _wsrpc.onResponse('CALL_ME_2', function (json) {
-                console.log('Server say ' + json.message);
-            });
-    _wsrpc.doRequest('CALL_ME_2', {'name': 'john'}));
+    frontend.call('myObject1', 'method1',
+       function (json) {
+           console.log('myObject1.method1 gives ' + JSON.stringify(json));
+       },
+       function (err) {
+           console.log('Fail ' + err);
+       }
+    ).fire(jsonParams); 
+
+Methods of the other frontend can now be call like this :
+
+    frontend.call('myObject2', 'method2',
+       function (json) {
+           console.log('myObject2.method2 gives ' + JSON.stringify(json));
+       },
+       function (err) {
+           console.log('Fail ' + err);
+       }
+    ).broadcast(jsonParams);   
+   
+# License
+
+[MIT](https://github.com/lionelg3/WSRpc/blob/master/LICENSE)
