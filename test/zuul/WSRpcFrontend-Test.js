@@ -5,14 +5,14 @@ var WS_PORT = 3000;
 var assert = require('assert');
 var after = require('after');
 
-var wrc = require('../../dist/WSRpcFrontend');
+var frontend = require('../../dist/WSRpcFrontend');
 var bus = require('../../dist/EventBus');
 var reg = require('../../dist/Registry');
 var jrpc = require('../../dist/JsonRpc');
 
 var sample = require('./../extra/wsrpc_registry_classes').wsrpc_registry_classes;
 
-wrc.DEBUG = true;
+frontend.DEBUG = true;
 
 suite('WSRpcFrontend');
 
@@ -29,15 +29,15 @@ test('WSRpcFrontend WebSocket client connect', function (done) {
 test('WSRpcFrontend link', function (done) {
     done = after(4, done);
     var _ws = new WebSocket('ws://localhost:' + WS_PORT);
-    var _wrc = new wrc.WSRpcFrontend();
+    var _frontend = new frontend.WSRpcFrontend();
     try {
-        _wrc.link(null);
+        _frontend.link(null);
     } catch (err) {
         done();
     }
 
     try {
-        _wrc.call(
+        _frontend.call(
             'sample',
             'action').fire();
     } catch (err) {
@@ -45,7 +45,7 @@ test('WSRpcFrontend link', function (done) {
     }
 
     try {
-        _wrc.link(_ws);
+        _frontend.link(_ws);
         done();
     } catch (err) {
         console.warn(err);
@@ -59,12 +59,12 @@ test('WSRpcFrontend link', function (done) {
 test('WSRpcFrontend fire call', function (done) {
     done = after(3, done);
     var ws = new WebSocket('ws://localhost:' + WS_PORT);
-    var _wrc = new wrc.WSRpcFrontend();
-    _wrc.link(ws);
+    var _frontend = new frontend.WSRpcFrontend();
+    _frontend.link(ws);
     done();
 
     setTimeout(function () {
-        _wrc.call(
+        _frontend.call(
             'remoteObject',
             'sayHello',
             function (json) {
@@ -84,12 +84,12 @@ test('WSRpcFrontend broadcast call', function (done) {
     done = after(6, done);
     var counter = 0;
     var ws = new WebSocket('ws://localhost:' + WS_PORT);
-    var _wrc = new wrc.WSRpcFrontend();
-    _wrc.link(ws);
+    var _frontend = new frontend.WSRpcFrontend();
+    _frontend.link(ws);
     done();
 
     setTimeout(function () {
-        _wrc.call(
+        _frontend.call(
             'remoteObject',
             'sayHello',
             function (json) {
@@ -110,12 +110,12 @@ test('WSRpcFrontend broadcast call', function (done) {
 test('WSRpcFrontend create failed call', function (done) {
     done = after(3, done);
     var ws = new WebSocket('ws://localhost:' + WS_PORT);
-    var _wrc = new wrc.WSRpcFrontend();
-    _wrc.link(ws);
+    var _frontend = new frontend.WSRpcFrontend();
+    _frontend.link(ws);
     done();
 
     setTimeout(function () {
-        _wrc.call(
+        _frontend.call(
             'remoteObject',
             'sayHelloFailed',
             function (json) {
@@ -135,8 +135,8 @@ test('WSRpcFrontend create failed call', function (done) {
 });
 
 test('WSRpcFrontend simulate singleton handler', function () {
-    var _wrc = new wrc.WSRpcFrontend();
-    _wrc.singleton('compteur', sample.Compteur);
+    var _frontend = new frontend.WSRpcFrontend();
+    _frontend.singleton('compteur', sample.Compteur);
 
     var __message = null;
     var mockClient = {
@@ -147,9 +147,9 @@ test('WSRpcFrontend simulate singleton handler', function () {
 
     var _rpc = jrpc.RPC.Request('id1', 'compteur.increment');
     var _msg = new jrpc.RPC(_rpc);
-    _wrc._handler.execute(mockClient, _msg.getInstance(), _msg.getMethod(), _msg.getParams(), _msg.getId());
-    _wrc._handler.execute(mockClient, _msg.getInstance(), _msg.getMethod(), _msg.getParams(), _msg.getId());
-    _wrc._handler.execute(mockClient, _msg.getInstance(), _msg.getMethod(), _msg.getParams(), _msg.getId());
+    _frontend._handler.execute(mockClient, _msg.getInstance(), _msg.getMethod(), _msg.getParams(), _msg.getId());
+    _frontend._handler.execute(mockClient, _msg.getInstance(), _msg.getMethod(), _msg.getParams(), _msg.getId());
+    _frontend._handler.execute(mockClient, _msg.getInstance(), _msg.getMethod(), _msg.getParams(), _msg.getId());
 
     var lastresponse = new jrpc.RPC(JSON.parse(__message));
     var result = lastresponse.getResult();
@@ -157,8 +157,8 @@ test('WSRpcFrontend simulate singleton handler', function () {
 });
 
 test('WSRpcFrontend simulate stateless handler', function () {
-    var _wrc = new wrc.WSRpcFrontend();
-    _wrc.stateless('compteur', sample.Compteur);
+    var _frontend = new frontend.WSRpcFrontend();
+    _frontend.stateless('compteur', sample.Compteur);
 
     var __message = null;
     var mockClient = {
@@ -169,9 +169,9 @@ test('WSRpcFrontend simulate stateless handler', function () {
 
     var _rpc = jrpc.RPC.Request('id1', 'compteur.increment');
     var _msg = new jrpc.RPC(_rpc);
-    _wrc._handler.execute(mockClient, _msg.getInstance(), _msg.getMethod(), _msg.getParams(), _msg.getId());
-    _wrc._handler.execute(mockClient, _msg.getInstance(), _msg.getMethod(), _msg.getParams(), _msg.getId());
-    _wrc._handler.execute(mockClient, _msg.getInstance(), _msg.getMethod(), _msg.getParams(), _msg.getId());
+    _frontend._handler.execute(mockClient, _msg.getInstance(), _msg.getMethod(), _msg.getParams(), _msg.getId());
+    _frontend._handler.execute(mockClient, _msg.getInstance(), _msg.getMethod(), _msg.getParams(), _msg.getId());
+    _frontend._handler.execute(mockClient, _msg.getInstance(), _msg.getMethod(), _msg.getParams(), _msg.getId());
 
     var lastresponse = new jrpc.RPC(JSON.parse(__message));
     var result = lastresponse.getResult();
@@ -181,13 +181,13 @@ test('WSRpcFrontend simulate stateless handler', function () {
 test('WSRpcFrontend use client handler', function (done) {
     done = after(3, done);
     var ws = new WebSocket('ws://localhost:' + WS_PORT);
-    var _wrc = new wrc.WSRpcFrontend();
-    _wrc.link(ws);
-    _wrc.singleton('compteur', sample.Compteur);
+    var _frontend = new frontend.WSRpcFrontend();
+    _frontend.link(ws);
+    _frontend.singleton('compteur', sample.Compteur);
     done();
 
     setTimeout(function () {
-        _wrc.call(
+        _frontend.call(
             'remoteObject',
             'callme'
         ).fire()
@@ -202,7 +202,7 @@ test('WSRpcFrontend use client handler', function (done) {
         };
         var _rpc = jrpc.RPC.Request('id_final', 'compteur.increment');
         var _msg = new jrpc.RPC(_rpc);
-        _wrc._handler.execute(mockClient, _msg.getInstance(), _msg.getMethod(), _msg.getParams(), _msg.getId());
+        _frontend._handler.execute(mockClient, _msg.getInstance(), _msg.getMethod(), _msg.getParams(), _msg.getId());
     }, 1000);
 
     setTimeout(function () {
