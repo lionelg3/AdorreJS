@@ -18,8 +18,8 @@ export module api {
 
         execute(client: WebSocket, instance: string, method: string, params: JSON, id: string);
         broadcastExecute(server: ws.Server, client: WebSocket, instance: string, method: string, params: JSON, id: string);
-        sendResponseToOrigin(id: string, result: JSON);
-        sendErrorToOrigin(id: string, code: number, message: string);
+        sendResponseToOrigin(client: any, id: string, result: JSON);
+        sendErrorToOrigin(client: any, id: string, code: number, message: string);
         useResponse(id: string, result: JSON);
         receiveClientError(rpc: jrpc.RPC);
     }
@@ -86,6 +86,7 @@ export class BackendCallHandler implements api.IBackendCallHandler {
             }
         }
         else {
+            console.warn('RPC backend instance named ' + instance + ' not  found.');
             client.send(
                 JSON.stringify(
                     jrpc.RPC.Error('Error:' + id, jrpc.RPC.METHOD_NOT_FOUND, 'RPC backend instance named ' + instance + ' not found.')
@@ -103,18 +104,16 @@ export class BackendCallHandler implements api.IBackendCallHandler {
         });
     }
 
-    public sendResponseToOrigin(id: string, result: JSON) {
-        if (id && this._pendingRequest[id]) {
+    public sendResponseToOrigin(client: any, id: string, result: JSON) {
+        if (id && client) {
             var newRpc = jrpc.RPC.Response(id, result);
-            var client = this._pendingRequest[id];
             client.send(JSON.stringify(newRpc));
         }
     }
 
-    public sendErrorToOrigin(id: string, code: number, message: string) {
-        if (id && this._pendingRequest[id]) {
+    public sendErrorToOrigin(client: any, id: string, code: number, message: string) {
+        if (id && client) {
             var newRpc = jrpc.RPC.Error(id, code, message);
-            var client = this._pendingRequest[id];
             client.send(JSON.stringify(newRpc));
         }
     }
