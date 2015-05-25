@@ -12,7 +12,7 @@ var mockClient = {
     jsonRpcMessage: null,
     send: function(data) {
         this.callCount ++;
-        console.log('MOCK SEND ' + '(' + this.callCount + '), data = ' + data);
+        //console.log('MOCK SEND ' + '(' + this.callCount + '), data = ' + data);
         this.jsonRpcMessage = data;
     },
     result: function() {

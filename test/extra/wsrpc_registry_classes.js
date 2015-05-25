@@ -31,18 +31,18 @@ var wsrpc_registry_classes;
     wsrpc_registry_classes.Compteur = Compteur;
     var DateUtil = (function () {
         function DateUtil() {
-            console.log('DateUtil <constructor>');
+            //console.log('DateUtil <constructor>');
         }
         DateUtil.prototype.getHour = function () {
-            console.log('DateUtil getHour()');
+            //console.log('DateUtil getHour()');
             return 23;
         };
         DateUtil.prototype.getMinutes = function () {
-            console.log('DateUtil getMinutes()');
+            //console.log('DateUtil getMinutes()');
             return 59;
         };
         DateUtil.prototype.getSecondes = function () {
-            console.log('DateUtil getSecondes()');
+            //console.log('DateUtil getSecondes()');
             return 59;
         };
         return DateUtil;
