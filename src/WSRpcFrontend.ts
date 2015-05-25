@@ -59,7 +59,7 @@ export class WSRpcFrontend implements api.IWSRpcFrontend {
 		call.ws = this._ws;
 		call.clazz = name;
 		call.method = method;
-		call.id = name + '.' + method + ':' + uuid.UUIDGenerator.generateUUID();
+		call.id = name + '.' + method + '/' + uuid.UUIDGenerator.generateUUID();
 
 		var eventBus:evt.EventBus = evt.EventBus.getSharedEventBus();
 		if (then) {

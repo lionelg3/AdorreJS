@@ -122,27 +122,6 @@ test('FrontendCallHandler call unknowned instance', function() {
             '}'
         )
     );
-
-    noCatch = null;
-    try {
-        _handler.execute(mockClient, rpc.getInstance(), rpc.getMethod(), rpc.getParams(), rpc.getId());
-        noCatch = true;
-    } catch (err) {
-        noCatch = false;
-    }
-    assert.equal(true, noCatch);
-
-    rpc = new jrpc.RPC(
-        JSON.parse(
-            '{' +
-                '"jsonrpc":"2.0",' +
-                '"method":"foo_bar",' +
-                '"params":null,' +
-                '"id":"FOO_BAR"' +
-            '}'
-        )
-    );
-
     noCatch = null;
     try {
         _handler.execute(mockClient, rpc.getInstance(), rpc.getMethod(), rpc.getParams(), rpc.getId());
