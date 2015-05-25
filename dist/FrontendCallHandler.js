@@ -44,7 +44,6 @@ var FrontendCallHandler = (function () {
             }
         }
         else {
-            console.warn('RPC frontend instance named ' + instance + ' not  found.');
             client.send(JSON.stringify(jrpc.RPC.Error('Error:' + id, jrpc.RPC.METHOD_NOT_FOUND, 'RPC frontend instance named ' + instance + ' not' + ' found.')));
         }
     };
