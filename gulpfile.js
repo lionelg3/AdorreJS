@@ -2,7 +2,8 @@ var gulp = require('gulp'),
     ts = require('gulp-typescript'),
     sourcemaps = require('gulp-sourcemaps'),
     del = require('del'),
-    shell = require('gulp-shell');
+    shell = require('gulp-shell'),
+    mocha = require('gulp-mocha');
 
 gulp.task('ts', ['clean'], function () {
     var tsProject = ts.createProject({
@@ -29,10 +30,17 @@ gulp.task('clean', function() {
     });
 });
 
-gulp.task('test', ['clean', 'ts'], shell.task([
-    'zuul --local 8080 -- ./test/zuul/*-Test.js'
+gulp.task('zuul', ['clean', 'ts'], shell.task([
+    './node_modules/.bin/zuul --local 8080 -- ./test/zuul/*-Test.js'
 ]));
 
 gulp.task('phantom', ['clean', 'ts'], shell.task([
-    'zuul --phantom -- ./test/*-Test.js'
+    './node_modules/.bin/zuul --phantom -- ./test/zuul/*-Test.js'
 ]));
+
+gulp.task('mocha', function () {
+    return gulp.src('./test/mocha/*.js', {read: false})
+            .pipe(mocha({reporter: 'min'}));
+});
+
+gulp.task('test', ['clean', 'ts', 'phantom', 'mocha']);
