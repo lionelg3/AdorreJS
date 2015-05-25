@@ -88,7 +88,8 @@ describe('BackendCallHandler sendResponseToOrigin tests', function () {
             mockClient.callCount = 0;
             var message = '{"jsonrpc":"2.0","result":100,"id":"INC_1"}';
             var rpc = new jrpc.RPC(JSON.parse(message));
-            _handler.sendResponseToOrigin(rpc.getId(), rpc.getResult());
+            var client = _handler.getClientResponseWithId(rpc.getId());
+            _handler.sendResponseToOrigin(client, rpc.getId(), rpc.getResult());
 
             assert.equal(1, mockClient.callCount);
             assert.equal(100, mockClient.result());
@@ -110,7 +111,8 @@ describe('BackendCallHandler sendErrorToOrigin tests', function () {
             mockClient.callCount = 0;
             var message = '{"jsonrpc":"2.0","error":{"code":-32601,"message":"RPC client instance named null not found."},"id":"INC_2"}';
             var rpc = new jrpc.RPC(JSON.parse(message));
-            _handler.sendErrorToOrigin(rpc.getId(), rpc.getCode(), rpc.getErrorMessage());
+            var client = _handler.getClientResponseWithId(rpc.getId());
+            _handler.sendErrorToOrigin(client, rpc.getId(), rpc.getCode(), rpc.getErrorMessage());
 
             assert.equal(1, mockClient.callCount);
             assert.equal(-32601, mockClient.error().code);
