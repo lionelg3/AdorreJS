@@ -11,7 +11,6 @@ gulp.task('ts', ['clean'], function () {
         declarationFiles: true,
         noExternalResolve: false,
         removeComments: true,
-        //typescript: require('typescript'),
         module: 'commonjs'
     });
     var tsResult = gulp.src('src/*.ts')
