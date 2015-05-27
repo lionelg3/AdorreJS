@@ -40,7 +40,7 @@ test('Backend test : execute', function(done) {
             'compteur',
             'increment',
             function (json) {
-                assert.equal(1, json);
+                assert.equal(true, 1 <= json);
                 done();
             }).fire();
 
